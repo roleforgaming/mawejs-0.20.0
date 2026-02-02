@@ -73,7 +73,7 @@ export function storyToFlatted(story) {
     file,
     options,
     head: {author, title, subtitle},
-    content: processDraft(section.acts).filter(isNotEmpty)
+    content: (section?.acts ? processDraft(section.acts) : [])?.filter(isNotEmpty) ?? []
   }
 
   //---------------------------------------------------------------------------
