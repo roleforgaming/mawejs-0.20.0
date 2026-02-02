@@ -77,6 +77,7 @@ export function getCoreEditor() {
     createEditor,
     // Base editor
     withHistory,
+    withNormalizationDebug, // Debug infinite normalization loops
     withWordCount,    // Autogenerate word counts
     withBR,           // empty <p> -> <br>
     withFixNesting,   // Keep correct nesting: chapter -> scene -> paragraph
@@ -282,6 +283,43 @@ function withMarkup(editor) {
   }
 
   return editor
+}
+
+//*****************************************************************************
+//
+// Normalization Debugging - Prevent Infinite Loops
+//
+//*****************************************************************************
+
+const MAX_NORMALIZE_ITERATIONS = 1000;
+
+function withNormalizationDebug(editor) {
+  const { normalizeNode } = editor;
+  let normalizeCount = 0;
+
+  editor.normalizeNode = (entry) => {
+    if (++normalizeCount > MAX_NORMALIZE_ITERATIONS) {
+      console.error("Normalization limit exceeded", {
+        count: normalizeCount,
+        entry: entry,
+        node: entry[0],
+        path: entry[1]
+      });
+      // Reset counter and bail out to prevent infinite loop
+      normalizeCount = 0;
+      return;
+    }
+    
+    // Call the original normalization
+    normalizeNode(entry);
+    
+    // Reset counter when we reach the editor level (end of normalization cycle)
+    if (Editor.isEditor(entry[0])) {
+      normalizeCount = 0;
+    }
+  };
+
+  return editor;
 }
 
 //*****************************************************************************
