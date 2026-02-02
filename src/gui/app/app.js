@@ -17,6 +17,8 @@ import React, {
   useRef,
 } from "react"
 
+import { ThemeContext } from '../../index.js';
+
 import {
   VBox, Filler,
   ToolBox, Button, Icon, IconButton,
@@ -406,6 +408,7 @@ function WithoutDoc({ setCommand, recent }) {
     <Separator />
     <Filler />
     <Separator />
+    <ThemeToggle />
     <HelpButton setCommand={setCommand} />
     {/* <SettingsButton /> */}
   </ToolBox>
@@ -452,9 +455,32 @@ function WithDoc({ setCommand, doc, updateDoc, recent }) {
     {/* <CloseButton setCommand={setCommand}/> */}
 
     <Separator />
+    <ThemeToggle />
     <HelpButton setCommand={setCommand} />
     {/* <SettingsButton /> */}
   </ToolBox>
+}
+
+//-----------------------------------------------------------------------------
+// Theme Toggle Button
+//-----------------------------------------------------------------------------
+
+function ThemeToggle() {
+  const { themeMode, setThemeMode } = useContext(ThemeContext);
+  const isDark = themeMode === 'dark';
+
+  const toggleTheme = () => {
+    setThemeMode(isDark ? 'light' : 'dark');
+  };
+
+  return (
+    <IconButton
+      tooltip={isDark ? "Switch to Light Theme" : "Switch to Dark Theme"}
+      onClick={toggleTheme}
+    >
+      {isDark ? <Icon.LightMode /> : <Icon.DarkMode />}
+    </IconButton>
+  );
 }
 
 //-----------------------------------------------------------------------------

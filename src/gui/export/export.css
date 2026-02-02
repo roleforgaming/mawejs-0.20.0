@@ -2,7 +2,8 @@
 @import "../common/styles/sheet.preview.css";
 
 .ExportSettings {
-  background: white;
+  background: var(--toolbar-background, white);
+  color: var(--sheet-foreground, black);
   padding: 6px;
-  border-left: 1px solid lightgray;
+  border-left: 1px solid var(--toc-border, lightgray);
 }

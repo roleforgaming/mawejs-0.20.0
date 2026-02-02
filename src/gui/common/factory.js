@@ -16,7 +16,6 @@ import React, {
 } from "react"
 
 import { styled } from '@mui/material/styles';
-import { theme } from "./theme";
 
 import {
   Button as MuiButton,
@@ -48,7 +47,6 @@ import { isNotEmpty } from "../../util";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 
 export {default as InfiniteScroll} from "react-infinite-scroll-component";
-export { theme }
 export {
   Spinner,
   Chip, Link,

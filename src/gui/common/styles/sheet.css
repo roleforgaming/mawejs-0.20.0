@@ -47,7 +47,8 @@
   font-family: 'Times New Roman', Times, serif;
   counter-reset: act chapter scene;
 
-  background: white;
+  background: var(--sheet-background, white);
+  color: var(--sheet-foreground, black);
 
   box-sizing:content-box;
 
@@ -57,7 +58,7 @@
   /*-------------------------------------------------------------------------*/
   /* Sheet is outlined, if one of its children have focus */
   &:focus-within {
-    outline: 2px solid lightblue;
+    outline: 2px solid var(--sheet-focus-outline, lightblue);
   }
 
   /* Child in Sheet are not outlined */

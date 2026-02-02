@@ -1,9 +1,10 @@
-import React from "react";
+import React, { createContext, useMemo, useEffect } from "react";
 
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from "@mui/material";
-import { theme } from "./gui/common/theme.js";
+import { getTheme } from "./gui/common/theme.js";
 import { SnackbarProvider } from "notistack";
+import { useSetting } from "./gui/app/settings.js";
 
 import App from "./gui/app/app.js"
 
@@ -11,14 +12,42 @@ import App from "./gui/app/app.js"
 //import {Provider} from "react-redux"
 
 //-----------------------------------------------------------------------------
+// Theme Context for theme switching
+//-----------------------------------------------------------------------------
+
+export const ThemeContext = createContext(null);
+
+//-----------------------------------------------------------------------------
+// ThemeWrapper component manages theme state and applies it dynamically
 // NOTE: ThemeProvider likes to create new theme every time it is rendered.
-// Keep it here, so it will be rendered only once.
+// Using useMemo prevents unnecessary theme recreation.
+//-----------------------------------------------------------------------------
+
+function ThemeWrapper({ children }) {
+  const [themeMode, setThemeMode] = useSetting('theme', 'light');
+  const theme = useMemo(() => getTheme(themeMode), [themeMode]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeMode);
+  }, [themeMode]);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <ThemeContext.Provider value={{ themeMode, setThemeMode }}>
+        {children}
+      </ThemeContext.Provider>
+    </ThemeProvider>
+  );
+}
+
+//-----------------------------------------------------------------------------
+// Render application with theme wrapper
 //-----------------------------------------------------------------------------
 
 createRoot(document.getElementById('root')).render(
-  <ThemeProvider theme={theme}>
+  <ThemeWrapper>
     <SnackbarProvider>
       <App />
     </SnackbarProvider>
-  </ThemeProvider>
+  </ThemeWrapper>
 );

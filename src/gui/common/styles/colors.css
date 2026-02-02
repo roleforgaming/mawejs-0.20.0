@@ -5,7 +5,25 @@
 // ----------------------------------------------------------------------------
 */
 
-:root {
+[data-theme="light"], :root {
+  /* App backgrounds */
+  --app-background: #F5F7F9;
+  --sheet-background: white;
+  --sheet-foreground: black;
+  --sheet-focus-outline: lightblue;
+
+  /* Toolbar colors */
+  --toolbar-background: white;
+  --toolbar-foreground: black;
+  --toolbar-border: lightgray;
+
+  /* Sidebar/TOC colors */
+  --toc-border: lightgray;
+  --toc-entry-hover: lightgrey;
+  --toc-entry-current: rgb(210, 230, 250);
+  --toc-scene-hover: #DEF;
+
+  /* Editor element colors */
   --synopsis-fg: rgb(0, 0, 0);
   --synopsis-bg: rgb(255, 255, 245);
   --synopsis-border: 1pt solid lightgray;
@@ -34,5 +52,44 @@
   --comment-fg: rgb(6, 61, 6);
   --comment-bg: #e7ffe7;
   */
+}
+
+[data-theme="dark"] {
+  /* App backgrounds */
+  --app-background: #1a1a1a;
+  --sheet-background: #2d2d2d;
+  --sheet-foreground: #e0e0e0;
+  --sheet-focus-outline: #1e4d7b;
+
+  /* Toolbar colors */
+  --toolbar-background: #2d2d2d;
+  --toolbar-foreground: #e0e0e0;
+  --toolbar-border: #555;
+
+  /* Sidebar/TOC colors */
+  --toc-border: #555;
+  --toc-entry-hover: #3a3a3a;
+  --toc-entry-current: #1e4d7b;
+  --toc-scene-hover: #3a3a3a;
+
+  /* Editor element colors */
+  --synopsis-fg: rgb(220, 220, 200);
+  --synopsis-bg: rgb(58, 53, 32);
+  --synopsis-border: 1pt solid #555;
+
+  --notes-fg: rgb(200, 220, 200);
+  --notes-bg: rgb(30, 58, 30);
+  --notes-border: 1pt solid #555;
+
+  --bookmark-fg: rgb(200, 100, 190);
+  --bookmark-bg: ;
+
+  --missing-fg: rgb(220, 80, 80);
+  --missing-bg: ;
+
+  --tags-fg: rgb(140, 140, 255);
+
+  --comment-fg: rgb(120, 200, 120);
+  --comment-bg: ;
 }
 

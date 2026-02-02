@@ -111,7 +111,7 @@ export function ExportView({ doc, updateDoc }) {
   //console.log("Flatted:", flatted)
 
   return <HBox style={{ overflow: "auto" }}>
-    <ExportIndex style={{ maxWidth: "300px", width: "300px", borderRight: "1px solid lightgray" }} flatted={flatted}/>
+    <ExportIndex style={{ maxWidth: "300px", width: "300px", borderRight: "1px solid var(--toc-border, lightgray)" }} flatted={flatted}/>
     <Preview flatted={flatted}/>
     <ExportSettings style={{minWidth: "300px"}} flatted={flatted} exports={exports} updateDoc={updateDoc}/>
   </HBox>

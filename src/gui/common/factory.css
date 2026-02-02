@@ -40,7 +40,9 @@
 .ToolBox {
   padding: 2px;
   align-items: center;
-  border-bottom: 1pt solid lightgray;
+  border-bottom: 1pt solid var(--toolbar-border, lightgray);
+  background: var(--toolbar-background, white);
+  color: var(--toolbar-foreground, black);
   /*
   paddingLeft: 4, paddingRight: 4,
   paddingTop: 4, paddingBottom: 4,

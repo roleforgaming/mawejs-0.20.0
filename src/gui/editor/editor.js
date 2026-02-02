@@ -111,13 +111,13 @@ export function loadEditorSettings(settings) {
     active: "draft",
     focusTo: undefined,
     left: {
-      style: {maxWidth: "400px", width: "400px", borderRight: "1px solid lightgray"},
+      style: {maxWidth: "400px", width: "400px", borderRight: "1px solid var(--toc-border, lightgray)"},
       indexed: ["act", "chapter", "scene", "bookmark"],
       words: "numbers",
       ...getLeftSettings()
     },
     right: {
-      style: {maxWidth: "300px", width: "300px", borderLeft: "1px solid lightgray"},
+      style: {maxWidth: "300px", width: "300px", borderLeft: "1px solid var(--toc-border, lightgray)"},
       selected: "index",
       indexed: ["act", "chapter", "scene", "bookmark"],
       words: undefined,
@@ -128,9 +128,9 @@ export function loadEditorSettings(settings) {
       notes: "right",
     },
     toolbox: {
-      left: {background: "white"},
-      mid: {background: "white"},
-      right: {background: "white"},
+      left: {},
+      mid: {},
+      right: {},
     }
   }
 }

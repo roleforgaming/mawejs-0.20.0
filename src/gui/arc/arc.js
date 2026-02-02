@@ -67,7 +67,7 @@ const indexStyle = {
   maxWidth: "350px",
   minWidth: "350px",
   width: "350px",
-  borderRight: "1px solid lightgray"
+  borderRight: "1px solid var(--toc-border, lightgray)"
 }
 
 export function StoryArcView({doc, updateDoc}) {
@@ -202,7 +202,6 @@ export function StoryArcView({doc, updateDoc}) {
 
 const styles = {
   toolbar: {
-    background: "white",
   }
 }
 
@@ -624,7 +623,7 @@ function labelWithLine({cx, cy, midAngle, labelRadius, innerRadius, outerRadius,
 
   return <g>
     <path d={`M${sx},${sy}L${ex},${ey}`} stroke="grey" fill="none" />
-    <text x={textx} y={texty} {...textAnchor()}>
+    <text x={textx} y={texty} style={{fill: "var(--sheet-foreground, black)"}} {...textAnchor()}>
       {name}
     </text>
   </g>

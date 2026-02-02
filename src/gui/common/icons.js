@@ -47,6 +47,8 @@ import {
   Label, LabelOutlined, AlternateEmail,
 
   SettingsOutlined,
+  DarkMode,
+  LightMode,
 
   Search,
   SwapHorizontalCircleOutlined,
@@ -214,6 +216,8 @@ export const Icon = {
   //AddFiles: FolderOpenOutlined,
 
   Settings: SettingsOutlined,
+  DarkMode: DarkMode,
+  LightMode: LightMode,
 
   Action: {
     Quit: Close,
