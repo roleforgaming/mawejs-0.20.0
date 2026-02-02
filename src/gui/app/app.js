@@ -14,6 +14,7 @@ import React, {
   useEffect, useState, useCallback,
   useMemo, useContext,
   useDeferredValue,
+  useRef,
 } from "react"
 
 import {
@@ -117,6 +118,41 @@ export default function App(props) {
     && doc?.storybook === saved?.storybook
     && doc?.notes === saved?.notes
   )
+
+  //---------------------------------------------------------------------------
+  // Auto-save functionality - save every 2 minutes when dirty
+  //---------------------------------------------------------------------------
+
+  const docRef = useRef(doc)
+  const dirtyRef = useRef(dirty)
+  const savedRef = useRef(saved)
+
+  useEffect(() => {
+    docRef.current = doc
+    dirtyRef.current = dirty
+    savedRef.current = saved
+  }, [doc, dirty, saved])
+
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      // Use refs to check current state without resetting the timer
+      if (!dirtyRef.current || !docRef.current?.file) return
+
+      console.log("Auto-saving document...")
+      const docToSave = docRef.current
+      
+      mawe.save(insertHistory(docToSave))
+        .then(file => {
+          // Only update saved state if the doc hasn't changed significantly since save started
+          // Note: Ideally we wants to mark *this version* as saved, but simplicity for now:
+          setSaved(docToSave) 
+          console.log(`Auto-saved: ${file.name}`)
+        })
+        .catch(err => console.error("Auto-save failed:", err))
+    }, 2 * 60 * 1000) // 2 minutes
+
+    return () => clearInterval(autoSaveInterval)
+  }, [])
 
   //---------------------------------------------------------------------------
   // Data we are trying to import (open in a dialog)
@@ -226,10 +262,27 @@ export default function App(props) {
     setImporting({ file: undefined, ext: undefined })
   }
 
-  function docFromBuffer({ buffer }) {
+  function docFromBuffer({ buffer, filename }) {
     const content = mawe.create(buffer)
-    setSaved(content)
-    updateDoc(content)
+    
+    // If filename is provided, save the new document immediately
+    if (filename) {
+      mawe.saveas(content, filename)
+        .then(file => {
+          const savedContent = {
+            ...content,
+            file
+          }
+          setSaved(savedContent)
+          updateDoc(savedContent)
+          setRecent(recentAdd(recent, file))
+          Inform.success(`Created: ${file.name}`)
+        })
+        .catch(err => Inform.error(err))
+    } else {
+      setSaved(content)
+      updateDoc(content)
+    }
   }
 
   function docFromResource({ filename }) {

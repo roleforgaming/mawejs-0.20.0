@@ -42,10 +42,22 @@ export async function cmdOpenFolder(filename) {
 }
 
 export async function cmdNewFile({ setCommand }) {
-  setCommand({
-    action: "set",
-    buffer: '<story format="mawe" />'
+  // Prompt user to choose location and name for the new project
+  const { canceled, filePath } = await fileSaveDialog({
+    title: "Create New Project",
+    filters,
+    defaultPath: "./NewProject.mawe",
+    properties: ["createDirectory", "showOverwriteConfirmation"],
   })
+  
+  if (!canceled) {
+    // Create new document and immediately save it with the chosen location
+    setCommand({
+      action: "set",
+      buffer: '<story format="mawe" />',
+      filename: filePath
+    })
+  }
 }
 
 export async function cmdOpenResource(setCommand, filename) {
