@@ -11,7 +11,7 @@ import {
   Transforms,
   Element,
 } from 'slate'
-import { useSlate, Editable } from 'slate-react'
+import { useSlate, Editable, ReactEditor } from 'slate-react'
 
 import {
   nodeShortcuts,
@@ -27,6 +27,7 @@ import {
 import {
   toggleFold,
   foldByType,
+  foldNode,
   FOLD,
 } from "./slateFolding"
 
@@ -62,12 +63,14 @@ export function SlateEditable({className, visible, highlight, ...props}) {
     [re]
   )
 
+  const renderElem = useCallback(props => renderElement(props, editor), [editor])
+
   return <Editable
     //readOnly={!active}
     className={addClass(className, !visible ? "Hidden" : undefined)}
     //className={className}
     spellCheck={false} // Keep false until you find out how to change language
-    renderElement={renderElement}
+    renderElement={renderElem}
     renderLeaf={renderLeaf}
     decorate={highlighter}
     onKeyDown={useCallback(e => onKeyDown(editor, e), [editor])}
@@ -88,16 +91,22 @@ const debug = {
   //blocks: "withBorders",  // Borders around chapter & scene div's to make them visible
 }
 
-function renderContainer(type, content, folded, attributes, children) {
+function renderContainer(type, content, folded, attributes, children, element, editor) {
   const foldClass = folded ? "folded" : undefined
   const [first, ...rest] = children
   return <div className={addClass(content ?? type, foldClass, debug?.blocks)} {...attributes}>
+    {folded && <span className="FoldToggle" contentEditable={false} onMouseDown={e => {
+      e.preventDefault()
+      e.stopPropagation()
+      const path = ReactEditor.findPath(editor, element)
+      foldNode(editor, element, path, false)
+    }}/>}
     {first}
     {folded ? null : rest}
   </div>
 }
 
-function renderElement({element, attributes, ...props}) {
+function renderElement({element, attributes, ...props}, editor) {
 
   const {type, folded, numbered, content} = element
   const {children} = props
@@ -111,7 +120,7 @@ function renderElement({element, attributes, ...props}) {
     case "act":
     case "chapter":
     case "scene":
-      return renderContainer(type, content, folded, attributes, children)
+      return renderContainer(type, content, folded, attributes, children, element, editor)
 
     //-------------------------------------------------------------------------
     // Container breaks
