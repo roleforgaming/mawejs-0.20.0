@@ -16,6 +16,16 @@ const {ipcRenderer} = require('electron-better-ipc');
 contextBridge.exposeInMainWorld("ipc", ipcRenderer);
 
 //-----------------------------------------------------------------------------
+// Push-message listener: main process -> renderer (e.g. "save-and-close")
+//-----------------------------------------------------------------------------
+
+contextBridge.exposeInMainWorld("ipcListener", {
+  on: (channel, callback) => {
+    ipcRenderer.on(channel, (event, ...args) => callback(...args));
+  }
+});
+
+//-----------------------------------------------------------------------------
 // More controlled way to expose interfaces
 //-----------------------------------------------------------------------------
 

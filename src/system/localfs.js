@@ -75,7 +75,7 @@ export function rename(fileid, to) {
 }
 
 export function remove(fileid) {
-  throw new Error("Not implemented.");
+  return fscall("remove", fileid);
 }
 
 //-----------------------------------------------------------------------------

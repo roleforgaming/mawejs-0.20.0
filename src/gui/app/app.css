@@ -22,3 +22,25 @@ body {
   background: var(--app-background, #F5F7F9);
 }
 
+/* --------------------------------------------------------------------------
+   Status bar – thin strip at the bottom of the viewport.
+   Uses the same CSS variables as the ToolBox so it inherits the active theme.
+   -------------------------------------------------------------------------- */
+.StatusBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  height: 22px;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--toolbar-foreground, #666);
+  background: var(--toolbar-background, white);
+  border-top: 1px solid var(--toolbar-border, lightgray);
+  opacity: 0.8;
+}
+
+.StatusBar .MuiCircularProgress-root {
+  color: var(--toolbar-foreground, #555);
+}
+

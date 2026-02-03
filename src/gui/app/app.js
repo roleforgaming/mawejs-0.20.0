@@ -23,7 +23,7 @@ import {
   VBox, Filler,
   ToolBox, Button, Icon, IconButton,
   IsKey, addHotkeys,
-  Separator,
+  Separator, Spinner,
   Menu, MenuItem,
   Inform,
 } from "../common/factory";
@@ -122,6 +122,13 @@ export default function App(props) {
   )
 
   //---------------------------------------------------------------------------
+  // Saving progress & last-save timestamp (feeds the StatusBar)
+  //---------------------------------------------------------------------------
+
+  const [isSaving, setIsSaving] = useState(false)
+  const [lastSaveTime, setLastSaveTime] = useState(null)
+
+  //---------------------------------------------------------------------------
   // Auto-save functionality - save every 2 minutes when dirty
   //---------------------------------------------------------------------------
 
@@ -141,19 +148,86 @@ export default function App(props) {
       if (!dirtyRef.current || !docRef.current?.file) return
 
       console.log("Auto-saving document...")
-      const docToSave = docRef.current
-      
-      mawe.save(insertHistory(docToSave))
+      setIsSaving(true)
+      const docToSave   = docRef.current
+      const docToWrite  = insertHistory(docToSave)
+      const recoveryPath = docToSave.file.id + ".recovery"
+
+      // 1) Write recovery copy first (crash safety)
+      // 2) Write the real file
+      // 3) Remove the recovery copy on success
+      mawe.saveas(docToWrite, recoveryPath)
+        .then(() => mawe.save(docToWrite))
         .then(file => {
-          // Only update saved state if the doc hasn't changed significantly since save started
-          // Note: Ideally we wants to mark *this version* as saved, but simplicity for now:
-          setSaved(docToSave) 
+          setSaved(docToSave)
+          setLastSaveTime(new Date())
+          setIsSaving(false)
           console.log(`Auto-saved: ${file.name}`)
+          fs.remove(recoveryPath).catch(() => {})
         })
-        .catch(err => console.error("Auto-save failed:", err))
+        .catch(err => {
+          console.error("Auto-save failed:", err)
+          setIsSaving(false)
+        })
     }, 2 * 60 * 1000) // 2 minutes
 
     return () => clearInterval(autoSaveInterval)
+  }, [])
+
+  //---------------------------------------------------------------------------
+  // Electron main-process asks the renderer to save before the window closes.
+  // We compute the history inline (no React state update needed) so that the
+  // save completes cleanly even if the component is about to unmount.
+  //---------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.ipcListener) return
+
+    window.ipcListener.on("save-and-close", () => {
+      const doc = docRef.current
+
+      // Nothing to save — close immediately
+      if (!doc?.file || !dirtyRef.current) {
+        window.ipc.callMain("app", ["confirm-close"])
+        return
+      }
+
+      // Ask the user what to do with unsaved changes
+      window.ipc.callMain("dialog", ["messagebox", {
+        title: "Unsaved Changes",
+        message: "Do you want to save your changes before closing?",
+        buttons: ["Save", "Don't Save", "Cancel"],
+        defaultId: 0,
+        cancelId: 2,
+      }]).then(choice => {
+        if (choice === 2) {
+          // Cancel — leave window open, reset so next close re-prompts
+          window.ipc.callMain("app", ["cancel-close"])
+          return
+        }
+
+        if (choice === 1) {
+          // Don't Save — close without persisting
+          window.ipc.callMain("app", ["confirm-close"])
+          return
+        }
+
+        // Save — persist history then close
+        const date = createDateStamp()
+        const history = [
+          ...doc.history.filter(e => e.type === "words" && e.date !== date),
+          { type: "words", date, ...doc.draft.words },
+        ]
+        const docToSave = { ...doc, history }
+
+        mawe.save(docToSave)
+          .then(() => window.ipc.callMain("app", ["confirm-close"]))
+          .catch(() => window.ipc.callMain("app", ["confirm-close"]))
+      }).catch(() => {
+        // Dialog itself failed (e.g. window destroyed) — confirm close as fallback
+        window.ipc.callMain("app", ["confirm-close"])
+      })
+    })
   }, [])
 
   //---------------------------------------------------------------------------
@@ -234,25 +308,61 @@ export default function App(props) {
   return (
     <SettingsContext value={settings}>
       <CmdContext value={setCommand}>
-        <View key={doc?.key} doc={doc} updateDoc={updateDoc} buffer={importing} setBuffer={setImporting} />
+        <View key={doc?.key} doc={doc} updateDoc={updateDoc} buffer={importing} setBuffer={setImporting}
+              dirty={dirty} isSaving={isSaving} lastSaveTime={lastSaveTime} />
       </CmdContext>
     </SettingsContext>
   )
 
   //---------------------------------------------------------------------------
+  // Persist the current document if it has unsaved changes.  Resolves
+  // immediately when there is nothing to save.
+  //---------------------------------------------------------------------------
+
+  function saveIfDirty() {
+    const currentDoc = docRef.current
+    if (!dirtyRef.current || !currentDoc?.file) return Promise.resolve()
+    return mawe.save(insertHistory(currentDoc))
+  }
+
+  //---------------------------------------------------------------------------
 
   function docFromFile({ filename }) {
-    mawe.load(filename)
-      .then(content => {
-        updateDoc(content)
-        setSaved(content)
-        setRecent(recentAdd(recent, content.file))
-        console.log("Loaded:", content.file)
-        Inform.success(`Loaded: ${content.file.name}`);
+    saveIfDirty().then(() => {
+      mawe.load(filename)
+        .then(content => {
+          updateDoc(content)
+          setSaved(content)
+          setLastSaveTime(new Date())
+          setRecent(recentAdd(recent, content.file))
+          console.log("Loaded:", content.file)
+          Inform.success(`Loaded: ${content.file.name}`);
+          // Attempt to recover from a previous crash
+          checkRecovery(filename, content)
+        })
+        .catch(err => {
+          setRecent(recentRemove(recent, { id: filename }))
+          Inform.error(err)
+        })
+    }).catch(err => Inform.error(err))
+  }
+
+  // If a .recovery file exists alongside the loaded file, it means the app
+  // crashed or was force-killed while that file was open.  Restore the most
+  // recent data and let the user save at their leisure.
+  function checkRecovery(filename, loadedContent) {
+    const recoveryPath = filename + ".recovery"
+    mawe.load(recoveryPath)
+      .then(recovered => {
+        // Swap in the recovered content but keep the original file reference
+        updateDoc({ ...recovered, file: loadedContent.file })
+        // Don't call setSaved → dirty stays true, user sees unsaved-changes indicator
+        Inform.warning("Recovered unsaved changes from previous session.")
+        fs.remove(recoveryPath).catch(() => {})
       })
-      .catch(err => {
-        setRecent(recentRemove(recent, { id: filename }))
-        Inform.error(err)
+      .catch(() => {
+        // No valid recovery — silently clean up if a stale file exists
+        fs.remove(recoveryPath).catch(() => {})
       })
   }
 
@@ -265,26 +375,29 @@ export default function App(props) {
   }
 
   function docFromBuffer({ buffer, filename }) {
-    const content = mawe.create(buffer)
-    
-    // If filename is provided, save the new document immediately
-    if (filename) {
-      mawe.saveas(content, filename)
-        .then(file => {
-          const savedContent = {
-            ...content,
-            file
-          }
-          setSaved(savedContent)
-          updateDoc(savedContent)
-          setRecent(recentAdd(recent, file))
-          Inform.success(`Created: ${file.name}`)
-        })
-        .catch(err => Inform.error(err))
-    } else {
-      setSaved(content)
-      updateDoc(content)
-    }
+    saveIfDirty().then(() => {
+      const content = mawe.create(buffer)
+
+      // If filename is provided, save the new document immediately
+      if (filename) {
+        mawe.saveas(content, filename)
+          .then(file => {
+            const savedContent = {
+              ...content,
+              file
+            }
+            setSaved(savedContent)
+            setLastSaveTime(new Date())
+            updateDoc(savedContent)
+            setRecent(recentAdd(recent, file))
+            Inform.success(`Created: ${file.name}`)
+          })
+          .catch(err => Inform.error(err))
+      } else {
+        setSaved(content)
+        updateDoc(content)
+      }
+    }).catch(err => Inform.error(err))
   }
 
   function docFromResource({ filename }) {
@@ -308,23 +421,37 @@ export default function App(props) {
   }
 
   function docSave() {
+    setIsSaving(true)
     mawe.save(insertHistory(doc))
       .then(file => {
         setSaved(doc)
+        setLastSaveTime(new Date())
+        setIsSaving(false)
         Inform.success(`Saved ${file.name}`)
+        // Clean up any leftover recovery file
+        if (doc?.file) fs.remove(doc.file.id + ".recovery").catch(() => {})
       })
-      .catch(err => Inform.error(err))
+      .catch(err => {
+        setIsSaving(false)
+        Inform.error(err)
+      })
   }
 
   function docSaveAs({ filename }) {
+    setIsSaving(true)
     mawe.saveas(insertHistory(doc), filename)
       .then(file => {
         setSaved(doc)
+        setLastSaveTime(new Date())
+        setIsSaving(false)
         updateDoc(doc => { doc.file = file })
         setRecent(recentAdd(recent, file))
         Inform.success(`Saved ${file.name}`)
       })
-      .catch(err => Inform.error(err))
+      .catch(err => {
+        setIsSaving(false)
+        Inform.error(err)
+      })
   }
 
   function docRename({ filename }) {
@@ -339,7 +466,27 @@ export default function App(props) {
   }
 
   function docClose() {
-    updateDoc(null)
+    const currentDoc = docRef.current
+
+    // Always clean up a leftover recovery file when the project is closed
+    if (currentDoc?.file) fs.remove(currentDoc.file.id + ".recovery").catch(() => {})
+
+    if (dirtyRef.current && currentDoc?.file) {
+      // Auto-save before closing the project
+      setIsSaving(true)
+      mawe.save(insertHistory(currentDoc))
+        .then(() => {
+          setIsSaving(false)
+          updateDoc(null)
+        })
+        .catch(err => {
+          setIsSaving(false)
+          Inform.error(err)
+          updateDoc(null)   // close anyway
+        })
+    } else {
+      updateDoc(null)
+    }
   }
 }
 
@@ -349,7 +496,7 @@ export default function App(props) {
 //
 //*****************************************************************************
 
-function View({ doc, updateDoc, buffer, setBuffer }) {
+function View({ doc, updateDoc, buffer, setBuffer, dirty, isSaving, lastSaveTime }) {
 
   //const [view, setView] = useSetting(doc?.file?.id, getViewDefaults(null))
   //const [view, setView] = useState(() => getViewDefaults())
@@ -362,6 +509,7 @@ function View({ doc, updateDoc, buffer, setBuffer }) {
       /**/}
       <ViewSwitch doc={doc} updateDoc={updateDoc} />
       <RenderDialogs doc={doc} updateDoc={updateDoc} buffer={buffer} setBuffer={setBuffer} />
+      <StatusBar doc={doc} dirty={dirty} isSaving={isSaving} lastSaveTime={lastSaveTime} />
     </VBox>
   )
 }
@@ -644,4 +792,42 @@ class CloseButton extends React.PureComponent {
       <Icon.Close />
     </IconButton>
   }
+}
+
+//***----------------------------------------------------------------
+//
+// Status bar
+//
+//***----------------------------------------------------------------
+
+function formatTimeAgo(timestamp) {
+  const secs = Math.floor((Date.now() - timestamp) / 1000)
+  if (secs < 60) return `${secs}s`
+  const mins = Math.floor(secs / 60)
+  if (mins < 60) return `${mins}m`
+  return `${Math.floor(mins / 60)}h`
+}
+
+function StatusBar({ doc, dirty, isSaving, lastSaveTime }) {
+  // Tick every second so "Saved Xs ago" stays fresh
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  if (!doc) return null
+
+  let label
+  if (isSaving) {
+    label = <><Spinner size={16} />&nbsp;Saving…</>
+  } else if (lastSaveTime) {
+    label = `Saved ${formatTimeAgo(lastSaveTime)} ago`
+  } else if (dirty) {
+    label = "Unsaved changes"
+  }
+
+  if (!label) return null
+
+  return <div className="StatusBar">{label}</div>
 }

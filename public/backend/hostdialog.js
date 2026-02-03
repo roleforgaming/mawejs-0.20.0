@@ -7,7 +7,7 @@
 //*****************************************************************************
 
 module.exports = {
-  openFile, saveFile,
+  openFile, saveFile, messageBox,
 }
 
 //-----------------------------------------------------------------------------
@@ -22,4 +22,9 @@ async function openFile(browserWindow, options) {
 
 async function saveFile(browserWindow, options) {
   return dialog.showSaveDialog(browserWindow, options)
+}
+
+async function messageBox(browserWindow, options) {
+  const { response } = await dialog.showMessageBox(browserWindow, options)
+  return response
 }

@@ -24,6 +24,8 @@ function ipcDispatch(channel, params, browserWindow) {
         case "quit": return hostapp.quit(...args)
         case "log": return hostapp.log(...args)
         case "beep": return hostapp.beep(...args)
+        case "confirm-close": return hostapp.confirmClose(browserWindow)
+        case "cancel-close":  return hostapp.cancelClose()
         default: break;
       }
       throw Error(`IPC: ${channel}/${cmd}: Not implemented.`);
@@ -39,6 +41,7 @@ function ipcDispatch(channel, params, browserWindow) {
         case "settingswrite": return hostfs.fsSettingsWrite(...args);
         case "readdir": return hostfs.fsReadDir(...args);
         case "rename": return hostfs.fsRename(...args);
+        case "remove": return hostfs.fsRemove(...args);
         case "openexternal": return hostfs.fsOpenExternal(...args);
         case "readresource": return hostfs.fsReadResource(...args);
         case "dirname": return hostfs.fsDirname(...args);
@@ -54,7 +57,8 @@ function ipcDispatch(channel, params, browserWindow) {
       console.log(cmd, ...args)
       switch(cmd) {
         case "openfile": return dialog.openFile(browserWindow, ...args);
-        case "savefile": return dialog.saveFile(browserWindow, ...args);
+        case "savefile":   return dialog.saveFile(browserWindow, ...args);
+        case "messagebox": return dialog.messageBox(browserWindow, ...args);
         default: break;
       }
       throw Error(`IPC: ${channel}/${cmd}: Not implemented.`);

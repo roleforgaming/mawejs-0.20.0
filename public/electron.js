@@ -82,6 +82,37 @@ async function createWindow()
 
   mainWindow.on("closed", () => (mainWindow = null));
 
+  //-----------------------------------------------------------
+  // Graceful close: give the renderer a chance to save first.
+  // hostapp.closeState.confirmed is flipped by the renderer
+  // after it has persisted data (or decided nothing to save).
+  // A 5 s timeout is the safety net in case the renderer is
+  // hung or already crashed.
+  //-----------------------------------------------------------
+  hostapp.closeState.confirmed = false;
+  hostapp.closeState.pending   = false;
+  hostapp.closeState.timeoutId = null;
+
+  mainWindow.on("close", (event) => {
+    if (!hostapp.closeState.confirmed) {
+      event.preventDefault();
+      if (!hostapp.closeState.pending) {
+        hostapp.closeState.pending = true;
+        try {
+          mainWindow.webContents.send("save-and-close");
+        } catch (e) {
+          // Renderer is dead — allow the close immediately
+          hostapp.closeState.confirmed = true;
+        }
+        // Force-close fallback
+        hostapp.closeState.timeoutId = setTimeout(() => {
+          hostapp.closeState.confirmed = true;
+          if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
+        }, 5000);
+      }
+    }
+  });
+
   mainWindow.setMenu(null);
   //console.log("Languages:", mainWindow.webContents.session.availableSpellCheckerLanguages)
   //mainWindow.webContents.session.setSpellCheckerLanguages(['fi'])
@@ -166,3 +197,26 @@ app.on("will-quit", () => {
 //-----------------------------------------------------------------------------
 
 const ipcmain = require("./backend/ipcmain");
+const hostapp = require("./backend/hostapp");
+
+//-----------------------------------------------------------------------------
+// Graceful-shutdown helpers: route signals / uncaught exceptions through the
+// normal window-close path so the renderer gets its save opportunity.
+//-----------------------------------------------------------------------------
+
+function gracefulClose() {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.close();          // triggers the "close" handler above
+  } else {
+    app.quit();
+  }
+}
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught exception:", err);
+  gracefulClose();
+  setTimeout(() => app.quit(), 5000); // hard exit if close stalls
+});
+
+process.on("SIGTERM", () => { gracefulClose(); });
+process.on("SIGINT",  () => { gracefulClose(); });

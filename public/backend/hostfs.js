@@ -11,7 +11,7 @@ module.exports = {
   fsGetLocation,
   fsRead, fsWrite, fsReadDir,
   fsSettingsRead, fsSettingsWrite,
-  fsRename,
+  fsRename, fsRemove,
   fsOpenExternal,
   fsDirname, fsBasename, fsExtname,
   fsRelpath,
@@ -165,6 +165,16 @@ async function fsRename(fileid, name) {
 
   await fs.promises.rename(fileid, name)
   return fsGetFileEntry(name);
+}
+
+async function fsRemove(fileid) {
+  console.log("fsRemove:", fileid)
+  try {
+    await fs.promises.unlink(fileid);
+  } catch (e) {
+    if (e.code !== 'ENOENT') throw e;
+    // File already gone — nothing to do
+  }
 }
 
 //-----------------------------------------------------------------------------
