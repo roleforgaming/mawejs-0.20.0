@@ -167,11 +167,16 @@
   div.folded {
     position: relative;
 
-    &::before {
+    .FoldToggle {
       position: absolute;
       left: -0.75cm;
       color: grey;
-      content: "[+]";
+      cursor: pointer;
+      user-select: none;
+
+      &::before {
+        content: "[+]";
+      }
     }
 
     h4, h5, h6 {

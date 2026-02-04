@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "mcp__acp__Bash",
+      "mcp__acp__Write"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash .claude/statusline.sh"
+  }
+}

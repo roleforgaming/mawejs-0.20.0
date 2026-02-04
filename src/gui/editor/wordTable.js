@@ -96,7 +96,7 @@ export function WordTable({section, setSearchText, searchBoxRef}) {
   //---------------------------------------------------------------------------
 
   return <VBox style={{overflow: "auto"}}>
-    <ToolBox style={{background: "white"}}>
+    <ToolBox>
       <SearchBox
         value={filterText}
         onChange={ev => setFilterText(ev.target.value)}
@@ -106,7 +106,7 @@ export function WordTable({section, setSearchText, searchBoxRef}) {
         {sortAscending ? <Icon.Sort.Ascending/>: <Icon.Sort.Descending/>}
       </Button>
     </ToolBox>
-    <Label style={{padding: "4px", borderBottom: "1px solid lightgray"}} text={`Total: ${total}`}/>
+    <Label style={{padding: "4px", borderBottom: "1px solid var(--toc-border, lightgray)", color: "var(--sheet-foreground, black)"}} text={`Total: ${total}`}/>
     <VBox id="wordlist" className="TOC">
       <InfiniteScroll
         scrollableTarget="wordlist"

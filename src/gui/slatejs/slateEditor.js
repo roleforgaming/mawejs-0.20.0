@@ -243,7 +243,50 @@ function withMarkup(editor) {
       }
     }
 
+    // If we hit enter at an empty line inside a notes or synopsis scene,
+    // break out by converting the empty line to an hscene header.
+    // The normalizer will split the scene at that point automatically.
+    if(node && node.type === "br") {
+      const sceneMatch = Editor.above(editor, {
+        match: n => Element.isElement(n) && n.type === "scene",
+      })
+      if(sceneMatch && (sceneMatch[0].content === "notes" || sceneMatch[0].content === "synopsis")) {
+        Transforms.setNodes(editor, {type: "hscene"})
+        return
+      }
+    }
+
     return insertBreak()
+  }
+
+  //---------------------------------------------------------------------------
+  // Shift+Enter inside notes or synopsis scene breaks out to a new scene
+  //---------------------------------------------------------------------------
+
+  const { insertSoftBreak } = editor
+
+  editor.insertSoftBreak = () => {
+    const { selection } = editor
+
+    if(selection && Range.isCollapsed(selection)) {
+      const sceneMatch = Editor.above(editor, {
+        match: n => Element.isElement(n) && n.type === "scene",
+      })
+      if(sceneMatch && (sceneMatch[0].content === "notes" || sceneMatch[0].content === "synopsis")) {
+        const [node, path] = Editor.above(editor, {
+          match: n => Editor.isBlock(editor, n),
+        })
+        Editor.withoutNormalizing(editor, () => {
+          if(Node.string(node) !== "") {
+            Transforms.splitNodes(editor, {always: true})
+          }
+          Transforms.setNodes(editor, {type: "hscene"})
+        })
+        return
+      }
+    }
+
+    return insertSoftBreak()
   }
 
   //---------------------------------------------------------------------------
