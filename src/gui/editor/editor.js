@@ -199,6 +199,7 @@ export function EditView({doc, updateDoc}) {
   // Cursor movement tracking
   //---------------------------------------------------------------------------
 
+  const [focusMode, setFocusMode] = useState(false)
   const [track, setTrack] = useState(undefined)
 
   const trackMarks = useCallback((editor, sectID) => {
@@ -310,6 +311,8 @@ export function EditView({doc, updateDoc}) {
     track,
     updateSection,
     editors,
+    focusMode,
+    setFocusMode,
   }
 
   //---------------------------------------------------------------------------
@@ -342,11 +345,15 @@ export function EditView({doc, updateDoc}) {
       if(typeof(searchText) === "string") {
         _setSearchText(undefined)
         ReactEditor.focus(getActiveEdit())
+      } else if(focusMode === "flow") {
+        setFocusMode("focus")
+      } else if(focusMode) {
+        setFocusMode(false)
       }
     }],
     [IsKey.CtrlG,  ev => searchForward(getActiveEdit(), searchText, true)],
     [IsKey.CtrlShiftG, ev => searchBackward(getActiveEdit(), searchText, true)]
-  ]), [getActiveEdit, searchText]);
+  ]), [getActiveEdit, searchText, focusMode, setFocusMode]);
 
   //---------------------------------------------------------------------------
   // Debug/development view
@@ -769,6 +776,26 @@ class Searching extends React.PureComponent {
 
 //-----------------------------------------------------------------------------
 
+function getCurrentWord(editor) {
+  const { selection } = editor
+  if (!selection || !Range.isCollapsed(selection)) return ""
+
+  const { focus } = selection
+  const match = Editor.above(editor, {
+    match: n => Editor.isBlock(editor, n)
+  })
+  if (!match) return ""
+
+  const [, blockPath] = match
+  const start = Editor.start(editor, blockPath)
+  const range = { anchor: start, focus }
+  const textBefore = Editor.string(editor, range)
+  const wordMatch = textBefore.match(/(\S*)$/)
+  return wordMatch ? wordMatch[1] : ""
+}
+
+//-----------------------------------------------------------------------------
+
 function EditorBox({style, settings}) {
   const {doc, track} = settings
   const {active} = doc.ui.editor
@@ -778,16 +805,38 @@ function EditorBox({style, settings}) {
 
   const {searchBoxRef, searchText, setSearchText} = settings
   const {highlightText} = settings
+  const {focusMode, setFocusMode} = settings
+
+  const boardRef = useRef(null)
 
   const type = track?.node?.type
   const {bold, italic} = track?.marks ?? {}
+  const currentWord = focusMode === "flow" ? getCurrentWord(editor) : ""
 
   const updateDraft = useCallback(buffer => updateSection("draft", buffer), [updateSection])
   const updateNotes = useCallback(buffer => updateSection("notes", buffer), [updateSection])
   const updateStorybook = useCallback(buffer => updateSection("storybook", buffer), [updateSection])
   //const updateTrash = useCallback(buffer => updateSection("trashcan", buffer), [updateSection])
 
-  return <VFiller>
+  // Refocus editor when entering Flow (toolbar disappears, stealing focus)
+  useEffect(() => {
+    if (focusMode === "flow") ReactEditor.focus(editor)
+  }, [focusMode, editor])
+
+  // Typewriter scroll: keep cursor vertically centered when in focus mode
+  useEffect(() => {
+    if(!focusMode || !boardRef.current) return
+    const sel = window.getSelection()
+    if(!sel || sel.rangeCount === 0) return
+    const cursorRect = sel.getRangeAt(0).getBoundingClientRect()
+    const board = boardRef.current
+    const boardRect = board.getBoundingClientRect()
+    const targetScroll = (cursorRect.top - boardRect.top) + board.scrollTop - boardRect.height / 2
+    const maxScroll = board.scrollHeight - board.clientHeight
+    board.scrollTop = Math.max(0, Math.min(targetScroll, maxScroll))
+  }, [focusMode, track])
+
+  return <VFiller className={addClass(focusMode ? "FocusMode" : undefined, focusMode === "flow" ? "FlowMode" : undefined)}>
     {/* Editor toolbar */}
 
     <ToolBox style={doc.ui.editor.toolbox.mid}>
@@ -797,12 +846,36 @@ function EditorBox({style, settings}) {
       <Separator/>
       <Searching editor={editor} searchText={searchText} setSearchText={setSearchText} searchBoxRef={searchBoxRef}/>
       <Separator/>
+      <IconButton
+        tooltip={focusMode ? "Exit focus mode (Esc)" : "Focus mode"}
+        size="small"
+        onClick={() => setFocusMode(f => f ? false : "focus")}
+      >
+        {focusMode ? <Icon.Action.FocusExit/> : <Icon.Action.Focus/>}
+      </IconButton>
+      <IconButton
+        tooltip={focusMode === "flow" ? "Exit Flow (Esc)" : "Flow"}
+        size="small"
+        onClick={() => setFocusMode(f => f === "flow" ? "focus" : "flow")}
+      >
+        {focusMode === "flow" ? <Icon.Action.FlowExit/> : <Icon.Action.Flow/>}
+      </IconButton>
       <Filler />
     </ToolBox>
 
+    {focusMode === "flow" && (
+      <div className="FlowExitButton">
+        <IconButton size="small" onClick={() => setFocusMode("focus")}>
+          <Icon.Close />
+        </IconButton>
+      </div>
+    )}
+
+    {focusMode === "flow" && <div className="FlowOverlay"><span>{currentWord}</span></div>}
+
     {/* Editor board and sheet */}
 
-    <div className="Board Editor" style={{...style}}>
+    <div className="Board Editor" ref={boardRef} style={{...style}}>
 
       <Slate editor={editors.draft} initialValue={doc.draft.acts} onChange={updateDraft}>
         <SlateEditable visible={active === "draft"} className="Sheet Regular" highlight={highlightText}/>

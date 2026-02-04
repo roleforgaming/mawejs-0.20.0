@@ -100,6 +100,10 @@ import {
   DeleteOutlined,
   DriveFileRenameOutlineOutlined,
   Biotech,
+  Fullscreen,
+  FullscreenExit,
+  Create,
+  CreateOutlined,
 } from '@mui/icons-material';
 
 import {
@@ -247,6 +251,10 @@ export const Icon = {
       Bottom: VerticalAlignBottom,
     },
     HeadInfo: DescriptionOutlined,
+    Focus: Fullscreen,
+    FocusExit: FullscreenExit,
+    Flow: CreateOutlined,
+    FlowExit: Create,
   },
 
   Location: {

@@ -22,3 +22,76 @@ pre {
 }
 
 .Hidden { display: none; }
+
+/* ---------------------------------------------------------------------------- */
+/* Focus mode overlay */
+
+.FocusMode {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background: var(--app-background, #F5F7F9);
+}
+
+/* ---------------------------------------------------------------------------- */
+/* Flow mode */
+
+.FlowMode .ToolBox {
+  display: none;
+}
+
+.FlowMode .Board.Editor {
+  opacity: 0;
+}
+
+.FlowOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.FlowOverlay span {
+  font-size: 2.5rem;
+  color: var(--sheet-foreground, #333);
+  white-space: nowrap;
+}
+
+.FlowOverlay span::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 0.85em;
+  background-color: currentColor;
+  margin-left: 3px;
+  vertical-align: middle;
+  animation: flowCursorBlink 1s step-end infinite;
+}
+
+@keyframes flowCursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------------- */
+/* Flow exit button (hover-reveal in top-right) */
+
+.FlowExitButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  z-index: 20;
+}
+
+.FlowExitButton:hover {
+  opacity: 1;
+}
