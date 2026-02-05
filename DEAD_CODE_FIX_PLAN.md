@@ -54,7 +54,7 @@ git add -A
 
 ---
 
-### 1.2  Remove unused npm dependencies
+### [x] 1.2  Remove unused npm dependencies
 
 **What:** Four packages are installed but never imported anywhere.
 
@@ -133,11 +133,10 @@ Remove-Item src\system\scanner.js  # PowerShell
 
 ### Phase 1 checklist
 
-- [ ] `everything-claude-code/` directory is gone
-- [ ] `npm install` completed without errors
-- [ ] `src/gui/app/store/` directory is gone
-- [ ] Commented Redux imports removed from `src/index.js`
-- [ ] `src/system/scanner.js` is gone
+- [x ] `everything-claude-code/` directory is gone
+- [ x] `src/gui/app/store/` directory is gone
+- [x ] Commented Redux imports removed from `src/index.js`
+- [x ] `src/system/scanner.js` is gone
 - [ ] **`npm run build` passes**
 
 ---
