@@ -40,7 +40,7 @@ export function isAstChange(editor) {
 
 //-----------------------------------------------------------------------------
 
-export function elemByTypes(editor, types, anchor, focus) {
+function elemByTypes(editor, types, anchor, focus) {
   if(!anchor) anchor = Editor.start(editor, [])
   if(!focus) focus = Editor.end(editor, [])
 
@@ -52,7 +52,7 @@ export function elemByTypes(editor, types, anchor, focus) {
   )
 }
 
-export function elemsByRange(editor, anchor, focus) {
+function elemsByRange(editor, anchor, focus) {
   return Array.from(
     Editor.nodes(editor, {
       at: {anchor, focus},

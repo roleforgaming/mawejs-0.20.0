@@ -8,7 +8,7 @@
 
 //-----------------------------------------------------------------------------
 
-export const isEmpty = x => !x;
+const isEmpty = x => !x;
 export const isNotEmpty = x => !!x;
 
 //-----------------------------------------------------------------------------
@@ -25,7 +25,7 @@ export const numfmt = {
 // sleep
 //-----------------------------------------------------------------------------
 
-export function sleep(ms) {
+function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 

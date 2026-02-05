@@ -22,7 +22,7 @@ export function appQuit(options) {
   return syscall("quit", options);
 }
 
-export function appLog(message) {
+function appLog(message) {
   return syscall("log", message);
 }
 

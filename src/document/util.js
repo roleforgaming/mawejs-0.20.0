@@ -210,7 +210,7 @@ export function text2words(text) {
   return text.split(reSplit2Words).filter(word => word.length)
 }
 
-export function wordcount(text) {
+function wordcount(text) {
   return text2words(text).length
 }
 

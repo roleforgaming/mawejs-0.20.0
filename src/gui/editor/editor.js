@@ -155,7 +155,7 @@ export function saveEditorSettings(settings) {
 
 //-----------------------------------------------------------------------------
 
-export function getFocusTo(doc) { return doc.ui.editor.focusTo.id; }
+function getFocusTo(doc) { return doc.ui.editor.focusTo.id; }
 export function setFocusTo(updateDoc, id) {
   updateDoc(doc => {
     doc.ui.view.selected = "editor"
