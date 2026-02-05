@@ -274,6 +274,7 @@ function toHistory(doc) {
 function toHistoryEntry(entry) {
   switch(entry.type) {
     case "words": return toWordEntry(entry)
+    default: break
   }
   return undefined
 }

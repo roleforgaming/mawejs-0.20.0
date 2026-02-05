@@ -175,16 +175,15 @@ function parseSection(section) {
   }
 }
 
-function parseAct(act, index) {
+function parseAct(act, _index) {
   if(act.type !== "element" || act.name !== "act") {
-    console.log("Invalid act:", act)
     throw new Error("Invalid act", act)
   }
   const {name, folded: foldedStr, numbered: numberedStr, target: targetStr} = act.attributes ?? {};
   const target = textToInt(targetStr)
   const folded = foldedStr === "true"
   const numbered = numberedStr === "true"
-  const header = (!index && !name && !folded && !target) ? [] : [makeHeader(
+  const header = (!_index && !name && !folded && !target) ? [] : [makeHeader(
     "hact",
     name,
     numbered,
@@ -210,9 +209,8 @@ function parseAct(act, index) {
   }
 }
 
-function parseChapter(chapter, index) {
+function parseChapter(chapter, _index) {
   if(chapter.type !== "element" || chapter.name !== "chapter") {
-    console.log("Invalid chapter:", chapter)
     throw new Error("Invalid chapter:", chapter)
   }
   const {name, folded: foldedStr, numbered: numberedStr, target: targetStr} = chapter.attributes ?? {};
@@ -220,7 +218,7 @@ function parseChapter(chapter, index) {
   const folded = foldedStr === "true"
   const numbered = numberedStr === "true"
 
-  const header = (!index && !name && !folded && !target) ? [] : [makeHeader(
+  const header = (!_index && !name && !folded && !target) ? [] : [makeHeader(
     "hchapter",
     name,
     numbered,
@@ -246,9 +244,8 @@ function parseChapter(chapter, index) {
   }
 }
 
-function parseScene(scene, index) {
+function parseScene(scene, _index) {
   if(scene.type !== "element" || scene.name !== "scene") {
-    console.log("Invalid scene:", scene)
     throw new Error("Invalid scene", scene)
   }
 
@@ -262,7 +259,7 @@ function parseScene(scene, index) {
     "notes": "hnotes",
   }[content]
 
-  const header = (!index && !name && !folded && content == "scene") ? [] : [makeHeader(
+  const header = (!_index && !name && !folded && content === "scene") ? [] : [makeHeader(
     htype,
     name,
     true,
@@ -293,7 +290,6 @@ function parseScene(scene, index) {
 
 function parseParagraph(elem, index) {
   if(elem.type !== "element") {
-    console.log("Invalid paragraph:", elem)
     throw new Error("Invalid paragraph", elem)
   }
   //console.log(elem)
@@ -361,6 +357,7 @@ function parseHistory(history, draft) {
 function parseHistoryEntry(elem) {
   if(elem.type === "element") switch(elem.name) {
     case "words": return parseWordEntry(elem)
+    default: break
   }
 }
 

@@ -16,7 +16,6 @@ import React, {
 import {
   VBox, HBox, Filler,
   ToolBox, Button, Icon,
-  Input,
   Label,
   SearchBox,
   InfiniteScroll,
@@ -33,7 +32,7 @@ import {text2Regexp} from "../slatejs/slateSearch"
 function filterWordTable(wt, filterText) {
   if(!filterText) return Array.from(wt)
 
-  const table = new Array()
+  const table = []
   const re = new RegExp(`^${text2Regexp(filterText)}`, "gi")
 
   for(const entry of wt) {

@@ -8,7 +8,6 @@
 
 //-----------------------------------------------------------------------------
 
-export const isEmpty = x => !x;
 export const isNotEmpty = x => !!x;
 
 //-----------------------------------------------------------------------------
@@ -21,13 +20,6 @@ export const numfmt = {
   gsign: Intl.NumberFormat(undefined, {signDisplay: "always", useGrouping: true}),
 }
 
-//-----------------------------------------------------------------------------
-// sleep
-//-----------------------------------------------------------------------------
-
-export function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 //-----------------------------------------------------------------------------
 // Split list to groups starting by a specific element

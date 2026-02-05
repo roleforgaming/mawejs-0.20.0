@@ -8,8 +8,6 @@
 
 import "./editor.css"
 
-/* eslint-disable no-unused-vars */
-
 import React, {
   useState, useEffect,
   useMemo, useCallback,
@@ -24,7 +22,7 @@ import {
 } from "slate-react"
 
 import {
-  Editor, Transforms, Range,
+  Editor, Transforms,
 } from "slate";
 
 import { DragDropContext } from "@hello-pangea/dnd";
@@ -155,7 +153,7 @@ export function saveEditorSettings(settings) {
 
 //-----------------------------------------------------------------------------
 
-export function getFocusTo(doc) { return doc.ui.editor.focusTo.id; }
+function getFocusTo(doc) { return doc.ui.editor.focusTo.id; }
 export function setFocusTo(updateDoc, id) {
   updateDoc(doc => {
     doc.ui.view.selected = "editor"

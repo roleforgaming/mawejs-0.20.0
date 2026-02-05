@@ -19,16 +19,12 @@ import {
   DeferredRender,
   Inform,
   Label,
-  ToolBox,
-  Filler,
   MuiMenuItem,
 } from "../common/factory";
 
 import { elemName, getSuffix, text2words } from "../../document/util";
 
 import { exportAs, flattedFormat, flattedToText, storyToFlatted } from "../../document/export"
-
-import { setFocusTo } from "../editor/editor";
 import { numfmt } from "../../util";
 
 //-----------------------------------------------------------------------------
@@ -294,6 +290,8 @@ function ExportIndex({ style, flatted }) {
       case "hscene": return <SceneItem key={index} node={node} index={index}/>
       case "hsynopsis": return <SceneItem key={index} node={node} index={index}/>
       case "hnotes": return <SceneItem key={index} node={node} index={index}/>
+      default:
+        return null
     }
   }
 }

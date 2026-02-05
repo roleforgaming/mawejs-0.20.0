@@ -23,7 +23,7 @@ import {
   Separator, Icon,
 } from "../common/factory"
 
-import {DragDropContext, Droppable, Draggable} from "@hello-pangea/dnd";
+import {DragDropContext} from "@hello-pangea/dnd";
 import {DocIndex} from "../common/docIndex";
 import {elemName, filterCtrlElems, mawe} from "../../document";
 import { IDtoPath, wcElem } from "../../document/util";
@@ -75,13 +75,6 @@ export function StoryArcView({doc, updateDoc}) {
   const setElements = useCallback(value => updateDoc(doc => {doc.ui.arc.elements = value}), [updateDoc])
   const setTemplate = useCallback(value => updateDoc(doc => {doc.ui.arc.template = value}), [updateDoc])
   const setMode     = useCallback((mode) => {updateDoc(doc => {doc.ui.arc.mode = mode})}, [updateDoc])
-
-  /*
-  console.log("Beat sheet length=", tmplButtons.beatsheet.data
-    .map(data => data.size)
-    .reduce((a, b) => a + b, 0)
-  )
-  */
 
   //---------------------------------------------------------------------------
   // Slate editor for buffer manipulations
@@ -163,8 +156,6 @@ export function StoryArcView({doc, updateDoc}) {
 
   function onDragEnd(result) {
 
-    console.log("onDragEnd:", result)
-
     const {type, draggableId, source, destination} = result;
 
     if(!destination) return;
@@ -190,7 +181,6 @@ export function StoryArcView({doc, updateDoc}) {
       }
 
       default:
-        console.log("Unknown draggable type:", type, result)
         break;
     }
   }

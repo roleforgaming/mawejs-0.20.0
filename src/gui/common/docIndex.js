@@ -511,8 +511,9 @@ class ItemIcon extends React.PureComponent {
       case "comment":
       case "tags":
         return <div className={addClass("Box", type)} />
+      default:
+        return null
     }
-    return null
   }
 }
 
