@@ -1,0 +1,71 @@
+================================================================================
+  MaweJS Codemap Diff Report
+  Generated: 2026-02-03
+================================================================================
+
+STATUS: FIRST GENERATION (no previous codemaps existed)
+DIFF:   100% — all codemaps are new
+
+--------------------------------------------------------------------------------
+Files generated
+--------------------------------------------------------------------------------
+
+  codemaps/architecture.md   — Overall architecture, process boundary, IPC
+                                dispatch table, full renderer directory tree,
+                                key conventions.
+
+  codemaps/backend.md        — Electron main process: electron.js entry,
+                                IPC layer (ipcmain → ipcdispatch), hostfs /
+                                hostdialog / hostapp module APIs, graceful
+                                shutdown flow, main-process dependencies.
+
+  codemaps/frontend.md       — React renderer: component tree, app shell
+                                (app.js, context.js, settings.js, views.js),
+                                editor / SlateJS integration, common UI
+                                primitives, import/export/stats/arc views,
+                                experimental sketches, renderer dependencies.
+
+  codemaps/data.md           — File formats (.mawe XML schema, .mawe.gz),
+                                in-memory node-type taxonomy (containers,
+                                breaks, paragraphs, marks), markup quick-
+                                insert table, format-version migration chain
+                                (v1→v6), file-descriptor shape, mawe API,
+                                export formatters, settings persistence,
+                                word-count helpers.
+
+--------------------------------------------------------------------------------
+Source coverage summary
+--------------------------------------------------------------------------------
+
+  public/                    Fully covered (electron.js, backend/*)
+  src/gui/app/               Fully covered (app, context, settings, views, store)
+  src/gui/editor/            Fully covered
+  src/gui/slatejs/           Fully covered (all 8 files)
+  src/gui/common/            Fully covered (factory, components, hotkeys,
+                               icons, themes, styles)
+  src/gui/import/            Fully covered
+  src/gui/export/            Fully covered
+  src/gui/stats/             Fully covered
+  src/gui/arc/               Fully covered
+  src/gui/sketches/          Noted as experimental; not deeply documented
+  src/document/              Fully covered (index, head, elements, util,
+                               xmljs/*, export/*)
+  src/system/                Fully covered (localfs, dialog, host, scanner)
+  src/util/                  Fully covered (generic, compress)
+  test/                      Referenced in architecture.md (test conventions)
+  docs/                      Not duplicated — existing docs remain authoritative
+                               for file-format spec details
+
+--------------------------------------------------------------------------------
+Staleness triggers (regenerate when any of these change)
+--------------------------------------------------------------------------------
+
+  - New directories or files added under src/ or public/
+  - IPC commands added/removed in ipcdispatch.js
+  - New node types or marks in elements.js
+  - Migration version bumped in migration.js
+  - New view added in views.js
+  - Export format added in document/export/
+  - Dependency additions/removals in package.json
+
+================================================================================
