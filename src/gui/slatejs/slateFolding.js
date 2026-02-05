@@ -1,8 +1,7 @@
 import {
   Editor,
-  Range, Node,
+  Node,
   Transforms,
-  Element,
 } from 'slate'
 
 import { elemHeading, elemTags } from '../../document/util';
@@ -10,7 +9,6 @@ import { elemHeading, elemTags } from '../../document/util';
 import {
   nodeTypes,
 } from '../../document/elements';
-import { focusByPath } from './slateHelpers';
 
 //-----------------------------------------------------------------------------
 // Check, if element is inside folded block

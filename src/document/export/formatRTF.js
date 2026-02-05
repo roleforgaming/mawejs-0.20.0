@@ -120,16 +120,9 @@ const singleA4 = `${paperA4}
 \\margr${(paperwidth-textwidth)/2}
 \\gutter0`
 
-const doubleA4 = `\\margmirror
-${paperA4}
-\\margl${(paperwidth-textwidth)/2 + gutter}
-\\margr${(paperwidth-textwidth)/2 - gutter}`
-
 //-----------------------------------------------------------------------------
 
 function formatFile(head, content, options) {
-  const pgbreak = options.pgbreak ? "\\page" : ""
-
   const {author, title, subtitle} = head
   const headinfo = getHeader(head)
   const langcode = 1035

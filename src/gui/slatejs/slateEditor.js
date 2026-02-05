@@ -8,11 +8,10 @@
 
 import {
   Editor,
-  Node, Text,
+  Node,
   Transforms,
-  Range, Point,
+  Point,
   createEditor,
-  Element,
 } from 'slate'
 import { withHistory } from "slate-history"
 import { withReact } from 'slate-react'
@@ -228,7 +227,7 @@ function withMarkup(editor) {
       const {reset, eol} = paragraphTypes[node.type]
 
       // If we hit enter at empty line, and block type is RESETEMPTY, reset type
-      if(reset && Node.string(node) == "") {
+      if(reset && Node.string(node) === "") {
         Transforms.setNodes(editor, {type: reset});
         return
       }

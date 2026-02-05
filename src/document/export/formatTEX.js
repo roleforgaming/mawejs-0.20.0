@@ -20,7 +20,7 @@ const formatTEX = {
   //---------------------------------------------------------------------------
 
   hact: (p) => {
-    const {title, number} = p
+    const {title, _number} = p
     if(!title) return
 
     return `\\part{${escape(title)}}\n`
@@ -28,12 +28,12 @@ const formatTEX = {
 
   hchapter: (p) => {
 
-    const {title, number} = p
-    if(!title && !number) return
+    const {title, _number} = p
+    if(!title && !_number) return
 
-    const numbering = number ? escape(number.toString()) : ""
+    const numbering = _number ? escape(_number.toString()) : ""
     const head = title ? escape(title) : ""
-    //const numbering = number ? [`${number}`] : []
+    //const numbering = _number ? [`${_number}`] : []
     //const text = title ? [title] : []
     //const head = [ ...numbering, ...text].join(". ")
 

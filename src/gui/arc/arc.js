@@ -23,7 +23,7 @@ import {
   Separator, Icon,
 } from "../common/factory"
 
-import {DragDropContext, Droppable, Draggable} from "@hello-pangea/dnd";
+import {DragDropContext} from "@hello-pangea/dnd";
 import {DocIndex} from "../common/docIndex";
 import {elemName, filterCtrlElems, mawe} from "../../document";
 import { IDtoPath, wcElem } from "../../document/util";

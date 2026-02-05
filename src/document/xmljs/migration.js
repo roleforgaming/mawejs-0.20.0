@@ -6,7 +6,7 @@
 //*****************************************************************************
 //*****************************************************************************
 
-import { elemFind, elemFindall, elem2Text } from "./tree";
+import { elemFind } from "./tree";
 
 //-----------------------------------------------------------------------------
 // File format version is set to top-level <story> element. It defaults to 1
