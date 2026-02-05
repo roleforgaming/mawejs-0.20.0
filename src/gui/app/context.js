@@ -37,7 +37,6 @@ const importFilters = [
 
 export async function cmdOpenFolder(filename) {
   const dirname = await fs.dirname(filename ?? ".")
-  console.log("Open folder:", dirname)
   fs.openexternal(dirname)
 }
 
@@ -68,7 +67,6 @@ export async function cmdOpenResource(setCommand, filename) {
 //-----------------------------------------------------------------------------
 
 export function cmdLoadFile({setCommand, filename}) {
-  console.log("Load file:", filename)
   setCommand({action: "load", filename})
 }
 
@@ -78,7 +76,6 @@ function getDefaultPath(file) {
 
 export async function cmdOpenFile({ setCommand, file }) {
   const defaultPath = await getDefaultPath(file)
-  console.log("Open path:", defaultPath)
   const { canceled, filePaths } = await fileOpenDialog({
     filters,
     defaultPath,
@@ -93,18 +90,15 @@ export async function cmdOpenFile({ setCommand, file }) {
 //-----------------------------------------------------------------------------
 
 export function cmdImportClipboard({setCommand}) {
-  console.log("Import clipboard")
   setCommand({action: "clipboard"})
 }
 
 export function cmdImportFile({setCommand, file, ext}) {
-  console.log("Import file:", file.name)
   setCommand({action: "import", file, ext})
 }
 
 export async function cmdOpenImportFile({setCommand, file}) {
   const defaultPath = await getDefaultPath(file)
-  console.log("Import path:", defaultPath)
   const { canceled, filePaths } = await fileOpenDialog({
     title: "Import File",
     filters: importFilters,

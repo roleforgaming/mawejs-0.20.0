@@ -147,7 +147,6 @@ export default function App(props) {
       // Use refs to check current state without resetting the timer
       if (!dirtyRef.current || !docRef.current?.file) return
 
-      console.log("Auto-saving document...")
       setIsSaving(true)
       const docToSave   = docRef.current
       const docToWrite  = insertHistory(docToSave)
@@ -162,7 +161,6 @@ export default function App(props) {
           setSaved(docToSave)
           setLastSaveTime(new Date())
           setIsSaving(false)
-          console.log(`Auto-saved: ${file.name}`)
           fs.remove(recoveryPath).catch(() => {})
         })
         .catch(err => {
@@ -335,7 +333,6 @@ export default function App(props) {
           setSaved(content)
           setLastSaveTime(new Date())
           setRecent(recentAdd(recent, content.file))
-          console.log("Loaded:", content.file)
           Inform.success(`Loaded: ${content.file.name}`);
           // Attempt to recover from a previous crash
           checkRecovery(filename, content)
