@@ -8,8 +8,6 @@
 
 import "./editor.css"
 
-/* eslint-disable no-unused-vars */
-
 import React, {
   useState, useEffect,
   useMemo, useCallback,
@@ -17,14 +15,12 @@ import React, {
   useRef,
 } from 'react';
 
-import { useImmer } from "use-immer";
-
 import {
   Slate, ReactEditor,
 } from "slate-react"
 
 import {
-  Editor, Transforms, Range,
+  Editor, Transforms,
 } from "slate";
 
 import { DragDropContext } from "@hello-pangea/dnd";
@@ -58,7 +54,7 @@ import {WordTable} from "./wordTable"
 import {TagTable} from "./tagTable"
 
 import {
-  VBox, HBox, Filler, VFiller, HFiller,
+  VBox, HBox, Filler, VFiller,
   ToolBox, Icon, IconButton,
   MakeToggleGroup,
   SearchBox,
@@ -155,7 +151,6 @@ export function saveEditorSettings(settings) {
 
 //-----------------------------------------------------------------------------
 
-export function getFocusTo(doc) { return doc.ui.editor.focusTo.id; }
 export function setFocusTo(updateDoc, id) {
   updateDoc(doc => {
     doc.ui.view.selected = "editor"
@@ -250,7 +245,7 @@ export function EditView({doc, updateDoc}) {
         doc[key].words = wcElem({type: "sect", children: buffer})
       })
     }
-  }, [editors])
+  }, [editors, trackMarks, updateDoc])
 
   //---------------------------------------------------------------------------
   // Section selection + focusing + indexing
@@ -276,12 +271,12 @@ export function EditView({doc, updateDoc}) {
     //console.log("Focus to:", focusTo)
     const editor = getActiveEdit()
     focusByPath(editor, focusTo)
-  }, [refocus, active, focusTo])
+  }, [refocus, active, focusTo, getActiveEdit])
 
   // Initially focus editor
   useEffect(() => {
     ReactEditor.focus(getActiveEdit())
-  }, [])
+  }, [getActiveEdit])
 
   //---------------------------------------------------------------------------
   // Search
@@ -353,7 +348,7 @@ export function EditView({doc, updateDoc}) {
     }],
     [IsKey.CtrlG,  ev => searchForward(getActiveEdit(), searchText, true)],
     [IsKey.CtrlShiftG, ev => searchBackward(getActiveEdit(), searchText, true)]
-  ]), [getActiveEdit, searchText, focusMode, setFocusMode]);
+  ]), [getActiveEdit, searchText, focusMode, setFocusMode, setSearchText, searchBoxRef]);
 
   //---------------------------------------------------------------------------
   // Debug/development view
@@ -936,19 +931,3 @@ class ASTElement extends React.PureComponent {
   }
 }
 
-function SlateAST({editor}) {
-  //return <Pre style={{ width: "50%" }} content={editor.children} />
-  return <div style={{ width: "50%" }}>
-    <ASTChildren children={editor.children}/>
-    </div>
-}
-
-function Pre({ style, content }) {
-  return <pre style={{ fontSize: "10pt", ...style }}>
-    {typeof content === "string" ? content : `${JSON.stringify(content, null, 2)}`}
-  </pre>
-}
-
-function Empty() {
-  return null;
-}

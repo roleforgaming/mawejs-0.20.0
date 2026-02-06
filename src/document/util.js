@@ -210,10 +210,6 @@ export function text2words(text) {
   return text.split(reSplit2Words).filter(word => word.length)
 }
 
-export function wordcount(text) {
-  return text2words(text).length
-}
-
 export function createWordTable(section) {
   const wt = new Map()
 
@@ -280,6 +276,8 @@ function wcParagraph(elem) {
       //console.log("Fill:", fill)
       return { missing: (isNaN(fill) ? 0 : fill) }
     }
+    default:
+      break
   }
   return undefined
 }

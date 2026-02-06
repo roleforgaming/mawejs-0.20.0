@@ -147,7 +147,6 @@ export default function App(props) {
       // Use refs to check current state without resetting the timer
       if (!dirtyRef.current || !docRef.current?.file) return
 
-      console.log("Auto-saving document...")
       setIsSaving(true)
       const docToSave   = docRef.current
       const docToWrite  = insertHistory(docToSave)
@@ -162,7 +161,6 @@ export default function App(props) {
           setSaved(docToSave)
           setLastSaveTime(new Date())
           setIsSaving(false)
-          console.log(`Auto-saved: ${file.name}`)
           fs.remove(recoveryPath).catch(() => {})
         })
         .catch(err => {
@@ -172,6 +170,7 @@ export default function App(props) {
     }, 2 * 60 * 1000) // 2 minutes
 
     return () => clearInterval(autoSaveInterval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   //---------------------------------------------------------------------------
@@ -260,6 +259,7 @@ export default function App(props) {
       case "close": { docClose(command); break; }
       case "error": { Inform.error(command.message); break; }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [command])
 
   //---------------------------------------------------------------------------
@@ -278,6 +278,7 @@ export default function App(props) {
       //file: {id: "./examples/import/Frankenstein.md", name: "Frankenstein.md" }, ext: ".md",
     })
     /**/
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   //---------------------------------------------------------------------------
@@ -335,7 +336,6 @@ export default function App(props) {
           setSaved(content)
           setLastSaveTime(new Date())
           setRecent(recentAdd(recent, content.file))
-          console.log("Loaded:", content.file)
           Inform.success(`Loaded: ${content.file.name}`);
           // Attempt to recover from a previous crash
           checkRecovery(filename, content)
@@ -543,7 +543,7 @@ function DocBar({ doc, updateDoc }) {
   useEffect(() => addHotkeys([
     [IsKey.CtrlN, (e) => cmdNewFile({ setCommand })],
     [IsKey.CtrlO, (e) => cmdOpenFile({ setCommand, file })],
-  ]), [file]);
+  ]), [file, setCommand]);
 
   //console.log("Recent:", recent)
   if (!doc) return <WithoutDoc setCommand={setCommand} recent={recent} />
@@ -565,7 +565,7 @@ function WithoutDoc({ setCommand, recent }) {
 function WithDoc({ setCommand, doc, updateDoc, recent }) {
   const file = doc?.file
   const { head, draft } = doc
-  const setSelected = useCallback(value => updateDoc(doc => { doc.ui.view.selected = value }), [])
+  const setSelected = useCallback(value => updateDoc(doc => { doc.ui.view.selected = value }), [updateDoc])
 
   const { chars, text, missing } = useDeferredValue({
     chars: 0,
@@ -576,7 +576,7 @@ function WithDoc({ setCommand, doc, updateDoc, recent }) {
 
   useEffect(() => addHotkeys([
     [IsKey.CtrlS, (e) => cmdSaveFile({ setCommand, file })],
-  ]), [file])
+  ]), [file, setCommand])
 
   return <ToolBox>
     <FileMenu file={file} setCommand={setCommand} recent={recent} hasdoc={true}/>

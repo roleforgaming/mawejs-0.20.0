@@ -11,10 +11,8 @@ import React, {
 import {
   Label,
   TextField,
-  Menu, MenuItem,
+  MenuItem,
 } from "../common/factory";
-
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 import { text2lines} from "./util"
 import { splitByLeadingElem } from '../../util';

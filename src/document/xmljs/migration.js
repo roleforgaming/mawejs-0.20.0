@@ -6,7 +6,7 @@
 //*****************************************************************************
 //*****************************************************************************
 
-import { elemFind, elemFindall, elem2Text } from "./tree";
+import { elemFind } from "./tree";
 
 //-----------------------------------------------------------------------------
 // File format version is set to top-level <story> element. It defaults to 1
@@ -29,8 +29,6 @@ export function migrate(root) {
 
   const story = root.elements[0]
   const {format, version = "1"} = story.attributes ?? {};
-
-  console.log("Doc version:", version)
 
   if (story.name !== "story") throw Error("File has no story.");
   if (format !== "mawe") throw Error("Story is not mawe story.");
@@ -59,9 +57,6 @@ function v1_to_v2(story) {
 
   if(version !== "1") return story
 
-  console.log("Migrate v1 -> v2")
-  // Do something here
-
   return {
     ...story,
     attributes: {...story.attributes, version: "2" }
@@ -82,8 +77,6 @@ function v2_fixes(story) {
   const {version} = story.attributes ?? {}
 
   if(version !== "2") return story
-
-  console.log("Fix v2")
 
   const bodyElem  = elemFind(story, "body") ?? {type: "element", name: "body", elements: []}
   const notesElem = elemFind(story, "notes") ?? {type: "element", name: "notes", elements: []}
@@ -128,7 +121,6 @@ function v2_to_v3(story) {
   const {version} = story.attributes ?? {}
 
   if(version !== "2") return story
-  console.log("Migrate v2 -> v3")
 
   const bodyElem  = elemFind(story, "body") ?? {type: "element", name: "body", elements: []}
   const notesElem = elemFind(story, "notes") ?? {type: "element", name: "notes", elements: []}
@@ -237,9 +229,6 @@ function v3_to_v4(story) {
 
   if(version !== "3") return story
 
-  console.log("Migrate v3 -> v4")
-
-  // Fix unnumbered --> numbered
   const bodyElem  = elemFind(story, "body") ?? {type: "element", name: "body", elements: []}
   const notesElem = elemFind(story, "notes") ?? {type: "element", name: "notes", elements: []}
 
@@ -281,9 +270,6 @@ function v4_to_v5(story) {
 
   if(version !== "4") return story
 
-  console.log("Migrate v4 -> v5")
-
-  // Fix unnumbered --> numbered
   const bodyElem  = elemFind(story, "body") ?? {type: "element", name: "body", elements: []}
   const notesElem = elemFind(story, "notes") ?? {type: "element", name: "notes", elements: []}
 
@@ -353,13 +339,8 @@ function v5_to_v6(story) {
 
   if(version !== "5") return story
 
-  console.log("Migrate v5 -> v6")
-
-  // Fix unnumbered --> numbered
   const draftElem  = elemFind(story, "body") ?? {type: "element", name: "body", elements: []}
   const uiElem = elemFind(story, "ui") ?? {type: "element", name: "ui", elements: []}
-
-  console.log("Fix:", fixSettings(uiElem))
 
   const elements = story.elements
     .filter(elem => elem.name !== "ui")
@@ -418,8 +399,6 @@ function v6_fixes(story) {
   const referenceElem  = elemFind(story, "reference")
 
   if(!referenceElem) return story;
-
-  console.log("v6 rename")
 
   const elements = story.elements
     .filter(elem => elem.name !== "reference")

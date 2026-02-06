@@ -41,11 +41,3 @@ function getAuthor(head) {
   }
 }
 
-export function storyType(story) {
-  switch(story.exports?.type) {
-    case "short": return "Short"
-    case "long": return "Long"
-  }
-  return undefined
-}
-

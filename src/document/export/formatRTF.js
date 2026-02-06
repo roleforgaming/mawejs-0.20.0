@@ -110,7 +110,6 @@ const colors = `{\\colortbl;
 const paperwidth = 11905
 const paperheight = 16837
 const textwidth  = paperwidth - 2*1701
-const gutter = 500
 
 const paperA4 = `\\paperh${paperheight}\\paperw${paperwidth}
 \\margt851\\margb1701`
@@ -120,16 +119,9 @@ const singleA4 = `${paperA4}
 \\margr${(paperwidth-textwidth)/2}
 \\gutter0`
 
-const doubleA4 = `\\margmirror
-${paperA4}
-\\margl${(paperwidth-textwidth)/2 + gutter}
-\\margr${(paperwidth-textwidth)/2 - gutter}`
-
 //-----------------------------------------------------------------------------
 
 function formatFile(head, content, options) {
-  const pgbreak = options.pgbreak ? "\\page" : ""
-
   const {author, title, subtitle} = head
   const headinfo = getHeader(head)
   const langcode = 1035
@@ -179,7 +171,7 @@ function escape(text) {
       case '}': return "\\}"
       //case '~': return "\\~"
       case '"': return "\\'94"
+      default: return c;
     }
-    return c
   }
 }

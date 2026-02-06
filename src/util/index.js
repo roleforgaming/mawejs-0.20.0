@@ -13,14 +13,13 @@ import {nanoid} from "nanoid"
 
 import {
   splitByLeadingElem, splitByTrailingElem,
-  isEmpty, isNotEmpty,
-  sleep, numfmt,
+  isNotEmpty,
+  numfmt,
 } from "./generic"
 
 export {
   uuid, nanoid,
   splitByLeadingElem, splitByTrailingElem,
-  isEmpty, isNotEmpty,
-  sleep,
+  isNotEmpty,
   numfmt,
 }

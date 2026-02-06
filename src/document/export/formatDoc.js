@@ -50,7 +50,7 @@ function getSection(story, contentType) {
 
 export function storyToFlatted(story) {
 
-  const { file, exports, head} = story
+  const { exports, head} = story
   const { content, prefix_act, prefix_chapter, prefix_scene } = exports
   const section = getSection(story, content)
   const pgbreak = exports.type === "long"
@@ -70,7 +70,6 @@ export function storyToFlatted(story) {
   var scenenum = 0
 
   return {
-    file,
     options,
     head: {author, title, subtitle},
     content: (section?.acts ? processDraft(section.acts) : [])?.filter(isNotEmpty) ?? []
@@ -188,8 +187,8 @@ export function storyToFlatted(story) {
       case "p":
       case "quote":
       case "missing": return true
+      default: return false;
     }
-    return false
   }
 
   //---------------------------------------------------------------------------

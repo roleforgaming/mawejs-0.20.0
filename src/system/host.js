@@ -22,10 +22,6 @@ export function appQuit(options) {
   return syscall("quit", options);
 }
 
-export function appLog(message) {
-  return syscall("log", message);
-}
-
 export function appBeep() {
   return syscall("beep");
 }

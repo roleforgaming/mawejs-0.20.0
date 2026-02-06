@@ -5,7 +5,17 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "mcp__acp__Bash",
-      "mcp__acp__Write"
+      "mcp__acp__Write",
+      "Bash(git push:*)",
+      "Bash(ls \"C:\\\\Users\\\\Savannah\\\\.claude\\\\skills\\\\learned\"\" 2>/dev/null || echo \"Directory does not exist \")",
+      "Bash(echo:*)",
+      "Bash(npx react-scripts build)",
+      "Bash(npx knip:*)",
+      "Bash(npx depcheck:*)",
+      "Bash(npx eslint:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run react-build:*)"
     ]
   },
   "statusLine": {

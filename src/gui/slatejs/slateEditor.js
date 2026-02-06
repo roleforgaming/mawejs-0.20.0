@@ -8,11 +8,10 @@
 
 import {
   Editor,
-  Node, Text,
+  Node,
   Transforms,
-  Range, Point,
+  Point,
   createEditor,
-  Element,
 } from 'slate'
 import { withHistory } from "slate-history"
 import { withReact } from 'slate-react'
@@ -116,8 +115,6 @@ function withTextPaste(editor) {
   // to insertTextData(data).
   //---------------------------------------------------------------------------
 
-  const { insertTextData } = editor
-
   editor.insertTextData = data => {
     //console.log("insertTextData:", data)
     // return insertTextData(data)
@@ -188,7 +185,7 @@ function withMarkup(editor) {
     if(!selection) return insertText(text)
     if(!Range.isCollapsed(selection)) return insertText(text)
 
-    const [node, path] = Editor.above(editor, {
+    const [, path] = Editor.above(editor, {
       match: n => Editor.isBlock(editor, n),
     })
 
@@ -228,7 +225,7 @@ function withMarkup(editor) {
       const {reset, eol} = paragraphTypes[node.type]
 
       // If we hit enter at empty line, and block type is RESETEMPTY, reset type
-      if(reset && Node.string(node) == "") {
+      if(reset && Node.string(node) === "") {
         Transforms.setNodes(editor, {type: reset});
         return
       }
@@ -273,7 +270,7 @@ function withMarkup(editor) {
         match: n => Element.isElement(n) && n.type === "scene",
       })
       if(sceneMatch && (sceneMatch[0].content === "notes" || sceneMatch[0].content === "synopsis")) {
-        const [node, path] = Editor.above(editor, {
+        const [node] = Editor.above(editor, {
           match: n => Editor.isBlock(editor, n),
         })
         Editor.withoutNormalizing(editor, () => {
@@ -313,10 +310,9 @@ function withMarkup(editor) {
     if(!Point.equals(selection.focus, Editor.start(editor, path))) return deleteBackward(...args)
 
     if(node.type in paragraphTypes) {
-      const {bk, markup} = paragraphTypes[node.type]
+      const {bk} = paragraphTypes[node.type]
       if(bk) {
         // Remove formatting
-        // Transforms.insertText(editor, markup + " ")  // If you want to "undo" formatting
         Transforms.setNodes(editor, {type: bk})
         return
       }
@@ -609,7 +605,7 @@ function withFixNesting(editor) {
 
   function checkParent(node, path, type) {
     //console.log("FixNesting: Check parent", node, path, type)
-    const [parent, ppath] = Editor.parent(editor, path)
+    const [parent] = Editor.parent(editor, path)
 
     if(parent.type === type) return true
 

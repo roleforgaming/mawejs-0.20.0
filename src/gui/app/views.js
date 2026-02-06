@@ -40,7 +40,6 @@ export function saveViewSettings(settings) {
 }
 
 export function getViewMode(doc) { return doc.ui.view.selected; }
-export function setViewMode(updateDoc, value) { updateDoc(doc => {doc.ui.view.selected = value})}
 
 //*****************************************************************************
 //

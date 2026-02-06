@@ -17,7 +17,7 @@ import React, {
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 
 import {
-  VBox, HBox, Filler,
+  Filler,
   addClass,
   DeferredRender
 } from "./factory";
@@ -26,7 +26,7 @@ import {FormatWords} from "./components";
 import {elemAsText, elemName} from "../../document";
 import {
   elemNumbered, nodeIsCtrl, wcCumulative,
-  nodeID, childID, IDtoPath,
+  childID, IDtoPath,
 } from "../../document/util";
 
 //*****************************************************************************
@@ -198,7 +198,7 @@ class ActItem extends React.PureComponent {
   }
 
   Draggable(provided, snapshot) {
-    const {elem, wcFormat, id, index, include, onActivate, unfold, atAct, atChapter, atScene, refCurrent} = this.props
+    const {elem, wcFormat, id, include, onActivate, unfold, atAct, atChapter, atScene, refCurrent} = this.props
     const {innerRef, draggableProps, dragHandleProps} = provided
 
     const hasDropzone = (include.includes("chapter")) && (unfold || !elem.folded)
@@ -506,13 +506,12 @@ class ItemIcon extends React.PureComponent {
       case "bookmark":
       case "missing":
       case "fill":
-      //case "synopsis":
-      //case "notes":
       case "comment":
       case "tags":
         return <div className={addClass("Box", type)} />
+      default:
+        return null
     }
-    return null
   }
 }
 

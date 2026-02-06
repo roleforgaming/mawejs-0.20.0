@@ -1,15 +1,12 @@
 import React, { createContext, useMemo, useEffect } from "react";
 
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 import { ThemeProvider } from "@mui/material";
 import { getTheme } from "./gui/common/theme.js";
 import { SnackbarProvider } from "notistack";
 import { useSetting } from "./gui/app/settings.js";
 
-import App from "./gui/app/app.js"
-
-//import {store} from "./gui/app/store"
-//import {Provider} from "react-redux"
+import App from "./gui/app/app.js";
 
 //-----------------------------------------------------------------------------
 // Theme Context for theme switching
@@ -24,11 +21,11 @@ export const ThemeContext = createContext(null);
 //-----------------------------------------------------------------------------
 
 function ThemeWrapper({ children }) {
-  const [themeMode, setThemeMode] = useSetting('theme', 'light');
+  const [themeMode, setThemeMode] = useSetting("theme", "light");
   const theme = useMemo(() => getTheme(themeMode), [themeMode]);
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', themeMode);
+    document.documentElement.setAttribute("data-theme", themeMode);
   }, [themeMode]);
 
   return (
@@ -44,10 +41,10 @@ function ThemeWrapper({ children }) {
 // Render application with theme wrapper
 //-----------------------------------------------------------------------------
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <ThemeWrapper>
     <SnackbarProvider>
       <App />
     </SnackbarProvider>
-  </ThemeWrapper>
+  </ThemeWrapper>,
 );

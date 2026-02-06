@@ -4,9 +4,7 @@
 //
 //*****************************************************************************
 
-import React, {
-  useCallback,
-} from 'react';
+import React from 'react';
 
 import {
   Editor,
@@ -23,17 +21,16 @@ import {
 import { setMark } from './slateMarks';
 
 import {
-  toggleFold, foldAll,
   foldByType,
   FOLD,
 } from "./slateFolding"
 
 import {
-  MakeToggleGroup, Button, Icon, IconButton,
+  MakeToggleGroup, Button, Icon,
   Menu, MenuItem,
-  ListItemIcon, ListItemText, Typography,
   Separator,
 } from '../common/factory';
+
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 //*****************************************************************************

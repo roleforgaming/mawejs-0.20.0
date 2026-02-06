@@ -12,16 +12,13 @@ import {
   HelpOutline,
   Menu,
 
-  BarChartOutlined, BookmarksOutlined, ShowChart,
+  BarChartOutlined, BookmarksOutlined,
   LooksOne, LooksTwo,
-  UnfoldMore, UnfoldMoreDouble,
-  UnfoldLess, UnfoldLessDouble,
   AddBoxOutlined,
 
   ArrowUpward, ArrowDownward,
   ArrowLeft,
   ArrowRight,
-  ArrowDropUp,
   ArrowDropDown,
 
   KeyboardArrowDown,
@@ -30,8 +27,7 @@ import {
   KeyboardArrowRight,
 
   IndeterminateCheckBoxOutlined,
-  Expand, ExpandMore,
-  Collapse,
+  ExpandMore,
 
   FormatBold, FormatItalic,
 
@@ -42,9 +38,8 @@ import {
   PrintOutlined,
   DonutLarge,
   FormatAlignJustifyOutlined,
-  FormatAlignRightOutlined,
 
-  Label, LabelOutlined, AlternateEmail,
+  AlternateEmail,
 
   SettingsOutlined,
   DarkMode,
@@ -71,14 +66,9 @@ import {
   Home,
   Favorite,
 
-  Folder,
   InsertDriveFileOutlined,
   BrokenImageOutlined,
   CheckBox,
-
-  Comment,
-  Report,
-  AddBox,
 
   VisibilityOff,
   Numbers,
@@ -95,31 +85,21 @@ import {
   CommentOutlined,
   ReportOutlined,
   AlternateEmailOutlined,
-  Sort,
-  DeleteForeverOutlined,
   DeleteOutlined,
   DriveFileRenameOutlineOutlined,
-  Biotech,
   Fullscreen,
   FullscreenExit,
   Create,
   CreateOutlined,
+  NotesOutlined,
 } from '@mui/icons-material';
 
 import {
-  mdiSortAscending,
-  mdiSortDescending,
-  mdiSortReverseVariant,
-  mdiSortVariant,
   mdiTextBoxEditOutline,
-  mdiBookAlphabet,
   mdiBookOpenVariantOutline,
 } from '@mdi/js';
 
 import { createSvgIcon } from '@mui/material';
-import {BiotechOutlined} from '@mui/icons-material';
-import {ScienceOutlined} from '@mui/icons-material';
-import {NotesOutlined} from '@mui/icons-material';
 
 //-----------------------------------------------------------------------------
 // Material Design Icons
@@ -130,7 +110,6 @@ import {NotesOutlined} from '@mui/icons-material';
 //const MdiSortAscending = createSvgIcon(<path d={mdiSortReverseVariant}/>)
 //const MdiSortDescending = createSvgIcon(<path d={mdiSortVariant}/>)
 const MdiTextBoxEditOutline = createSvgIcon(<path d={mdiTextBoxEditOutline}/>)
-const MdiBookAlphabet = createSvgIcon(<path d={mdiBookAlphabet}/>)
 const MdiBookOpenVariantOutline = createSvgIcon(<path d = {mdiBookOpenVariantOutline}/>)
 
 //-----------------------------------------------------------------------------
