@@ -36,7 +36,7 @@ function filterWordTable(wt, filterText) {
   const re = new RegExp(`^${text2Regexp(filterText)}`, "gi")
 
   for(const entry of wt) {
-    const [key, count] = entry
+    const [key] = entry
     re.lastIndex = 0
     if(key.match(re)) table.push(entry)
   }
@@ -55,16 +55,16 @@ export function WordTable({section, setSearchText, searchBoxRef}) {
 
   const filtered = useMemo(() => filterWordTable(wt, filterText), [wt, filterText])
 
-  const total = useMemo(() => filtered.map(([wt, c]) => c).reduce((total, c) => total + c, 0))
+  const total = useMemo(() => filtered.map(([wt, c]) => c).reduce((total, c) => total + c, 0), [filtered])
 
   //---------------------------------------------------------------------------
   // Sort table
   const [sortAscending, setSortAscending] = useState(false)
 
-  const fSortAscending  = useCallback((a, b) => (a[1] > b[1]) ? 1 : (a[1] < b[1]) ? -1 : 0)
-  const fSortDescending = useCallback((a, b) => (a[1] < b[1]) ? 1 : (a[1] > b[1]) ? -1 : 0)
+  const fSortAscending  = useCallback((a, b) => (a[1] > b[1]) ? 1 : (a[1] < b[1]) ? -1 : 0, [])
+  const fSortDescending = useCallback((a, b) => (a[1] < b[1]) ? 1 : (a[1] > b[1]) ? -1 : 0, [])
 
-  const sorted = useMemo(() => filtered.toSorted(sortAscending ? fSortAscending : fSortDescending), [filtered, sortAscending])
+  const sorted = useMemo(() => filtered.toSorted(sortAscending ? fSortAscending : fSortDescending), [filtered, sortAscending, fSortAscending, fSortDescending])
 
   //---------------------------------------------------------------------------
   // Make batch for infinite scroll

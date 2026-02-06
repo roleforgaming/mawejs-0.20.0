@@ -20,7 +20,7 @@ const formatTEX = {
   //---------------------------------------------------------------------------
 
   hact: (p) => {
-    const {title, _number} = p
+    const {title} = p
     if(!title) return
 
     return `\\part{${escape(title)}}\n`

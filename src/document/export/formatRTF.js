@@ -110,7 +110,6 @@ const colors = `{\\colortbl;
 const paperwidth = 11905
 const paperheight = 16837
 const textwidth  = paperwidth - 2*1701
-const gutter = 500
 
 const paperA4 = `\\paperh${paperheight}\\paperw${paperwidth}
 \\margt851\\margb1701`
@@ -172,7 +171,7 @@ function escape(text) {
       case '}': return "\\}"
       //case '~': return "\\~"
       case '"': return "\\'94"
+      default: return c;
     }
-    return c
   }
 }

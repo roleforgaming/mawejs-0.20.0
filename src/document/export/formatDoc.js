@@ -187,8 +187,8 @@ export function storyToFlatted(story) {
       case "p":
       case "quote":
       case "missing": return true
+      default: return false;
     }
-    return false
   }
 
   //---------------------------------------------------------------------------

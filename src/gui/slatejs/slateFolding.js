@@ -15,7 +15,7 @@ import {
 
 export function elemIsFolded(editor, path) {
   for(const np of Node.levels(editor, path)) {
-    const [node, path] = np
+    const [node] = np
     if(Editor.isEditor(node)) continue
     const {foldable} = nodeTypes[node.type]
     if(!foldable) break
@@ -204,7 +204,7 @@ export function foldByTags(editor, tags) {
 
         // Go through blocks and get tags
         for(const elem of Node.children(editor, path)) {
-          const [node, path] = elem
+          const [node] = elem
 
           for(const key of elemTags(node)) {
             scenetags.add(key)

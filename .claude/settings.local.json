@@ -14,7 +14,8 @@
       "Bash(npx depcheck:*)",
       "Bash(npx eslint:*)",
       "Bash(dir:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm run react-build:*)"
     ]
   },
   "statusLine": {

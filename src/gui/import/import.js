@@ -9,7 +9,7 @@
 import "./import.css"
 
 import React, {
-  useState, useEffect,
+  useState, useEffect, useCallback,
 } from 'react';
 
 import {
@@ -17,15 +17,12 @@ import {
   ToolBox, Button,
   Label,
   Separator,
-  Menu, MenuItem,
   Inform,
   Filler,
   addHotkeys,
   IsKey,
   Dialog,
 } from "../common/factory";
-
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 import { maweFromTree } from "../../document/xmljs/load";
 
@@ -65,6 +62,7 @@ function getContent(file, ext) {
         .then(result => result.value),
       format: "text"
     }
+    default: break;
   }
   return {
     loader: fs.read(file.id),
@@ -81,7 +79,7 @@ export function ImportDialog({ updateDoc, buffer, setBuffer }) {
   const [format, setFormat] = useState()
   const [imported, setImported] = useState()
 
-  function Import(e) {
+  const Import = useCallback((e) => {
     const story = maweFromTree({
       elements: [{
         type: "element", name: "story",
@@ -96,16 +94,16 @@ export function ImportDialog({ updateDoc, buffer, setBuffer }) {
     })
     updateDoc(story)
     setBuffer(undefined)
-  }
+  }, [imported, updateDoc, setBuffer])
 
-  function Cancel(e) {
+  const Cancel = useCallback((e) => {
     //console.log('Cancel function called'); // Debugging log
     setBuffer(undefined); // Close the dialog by resetting the buffer
-  }
+  }, [setBuffer])
 
   useEffect(() => addHotkeys([
     [IsKey.Escape, Cancel],
-  ]), [])
+  ]), [Cancel])
 
   useEffect(() => {
     const { loader, format } = getContent(file, ext)
@@ -119,7 +117,7 @@ export function ImportDialog({ updateDoc, buffer, setBuffer }) {
         Inform.error(err);
         setBuffer()
       })
-  }, [buffer, setContent, setFormat, setBuffer])
+  }, [buffer, file, ext, setContent, setFormat, setBuffer])
 
   return <Dialog
       open={true}
@@ -159,56 +157,13 @@ export function ImportDialog({ updateDoc, buffer, setBuffer }) {
 
 //-----------------------------------------------------------------------------
 
-class SelectFormatButton extends React.PureComponent {
-
-  static order = ["text"]
-
-  render() {
-    const { format, setFormat } = this.props;
-    //const type = node?.type ?? undefined
-
-    const choices = this.constructor.choices
-    const order = this.constructor.order
-    const name = format in choices ? choices[format].name : "Text"
-
-    //console.log("Block type:", type)
-
-    return <PopupState variant="popover" popupId="file-menu">
-      {(popupState) => <React.Fragment>
-        <Button tooltip="Paragraph style" style={{ justifyContent: "flex-start" }} {...bindTrigger(popupState)}>Format: {name}</Button>
-        <Menu {...bindMenu(popupState)}>
-          {order.map(k => [k, choices[k]]).map(([k, v]) => (
-            <MenuItem key={k} value={k} onClick={e => { setFormat(k); popupState.close(e) }}>
-              {v.name}
-            </MenuItem>
-          )
-          )}
-          {/*
-          <ListSubheader>RTF</ListSubheader>
-          <MenuItem value="rtf1">RTF, A4, 1-side</MenuItem>
-          <MenuItem value="rtf2">RTF, A4, 2-side</MenuItem>
-          <ListSubheader>LaTeX</ListSubheader>
-          <MenuItem value="tex1">LaTeX, A5, 1-side</MenuItem>
-          <MenuItem value="tex2">LaTeX, A5 booklet</MenuItem>
-          <ListSubheader>Other</ListSubheader>
-          <MenuItem value="md">MD (Mark Down)</MenuItem>
-          */}
-        </Menu>
-      </React.Fragment>
-      }
-    </PopupState>
-  }
-}
-
-//-----------------------------------------------------------------------------
-
 class SelectFormat extends React.PureComponent {
   render() {
     const { format, content, setImported } = this.props
 
     switch (format) {
       case "text": return <ImportText content={content} setImported={setImported} />
+      default: return null
     }
-    return null
   }
 }

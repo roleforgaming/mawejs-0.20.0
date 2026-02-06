@@ -11,7 +11,7 @@ import React, {
 import {
   Label,
   TextField,
-  Menu, MenuItem,
+  MenuItem,
 } from "../common/factory";
 
 import { text2lines} from "./util"

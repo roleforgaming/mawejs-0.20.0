@@ -17,7 +17,7 @@ import {
 } from "recharts"
 
 import {
-  HBox, VBox, HFiller, VFiller,
+  HBox, VBox, VFiller,
   ToolBox,
   MakeToggleGroup,
   Separator, Icon,
@@ -25,7 +25,7 @@ import {
 
 import {DragDropContext} from "@hello-pangea/dnd";
 import {DocIndex} from "../common/docIndex";
-import {elemName, filterCtrlElems, mawe} from "../../document";
+import {elemName, filterCtrlElems} from "../../document";
 import { IDtoPath, wcElem } from "../../document/util";
 import { getCoreEditor } from "../slatejs/slateEditor";
 import { isAstChange } from "../slatejs/slateHelpers";
@@ -93,6 +93,7 @@ export function StoryArcView({doc, updateDoc}) {
     }
     editor.children = doc.draft.acts
     return editor
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   //---------------------------------------------------------------------------
@@ -128,8 +129,8 @@ export function StoryArcView({doc, updateDoc}) {
     switch(doc.ui.arc.elements) {
       case "act": return []
       case "chapter": return ["chapter"]
+      default: return ["chapter", "scene"]
     }
-    return ["chapter", "scene"]
   }
 
   return <DragDropContext onDragEnd={onDragEnd}>
@@ -218,8 +219,8 @@ function mode2rotate(mode) {
     case "topCW":     return { start:  90, rotate: -1}
     case "bottomCCW": return { start: 270, rotate:  1}
     case "bottomCW":  return { start: 270, rotate: -1}
+    default: return { start: 0, rotate: 1 }
   }
-  return { start: 0, rotate: 1 }
 }
 
 function ChartView({settings, doc, updateDoc}) {
@@ -620,7 +621,7 @@ function labelWithLine({cx, cy, midAngle, labelRadius, innerRadius, outerRadius,
 }
 
 function outerLabel(props) {
-  const {innerRadius, outerRadius} = props
+  const {outerRadius} = props
   const labelRadius = outerRadius * 1.1
   return labelWithLine({
     ...props,
@@ -629,7 +630,7 @@ function outerLabel(props) {
 }
 
 function innerLabel(props) {
-  const {innerRadius, outerRadius} = props
+  const {innerRadius} = props
   const labelRadius = innerRadius * 0.90
 
   return labelWithLine({
