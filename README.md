@@ -1,3 +1,11 @@
+# NOTICE: Personal Fork & AI-Assisted Development
+
+This is a personal fork of MaweJS. As a non-developer, I am utilizing AI tools to address existing bugs (such as the large copy/paste issue) and implement new features (including focus mode, flow mode, and a dark theme) that enhance my personal writing workflow.
+
+**Warning:** The code in this repository is not professionally reviewed. Please use this fork of the application at your own risk.
+
+---
+
 # MaweJS
 
 Looking for an editor for your story? Notepad, Word and Googledocs are too little, and Scrivener, Manuskript and yWriter are too much? You like Word-style text editors to write stories, but with larger stories it becomes difficult to restructure it. You have tried Scrivener-style editors, but you hate how you need to set up so many things before starting to write, and you feel uncomfortable editing your story scene-by-scene, you'd like to add things here and there.
