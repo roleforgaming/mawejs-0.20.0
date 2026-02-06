@@ -15,14 +15,13 @@ import {
   ListSubheader,
   Separator,
   TextField,
-  MenuItem,
   DeferredRender,
   Inform,
   Label,
   MuiMenuItem,
 } from "../common/factory";
 
-import { elemName, getSuffix, text2words } from "../../document/util";
+import { getSuffix, text2words } from "../../document/util";
 
 import { exportAs, flattedFormat, flattedToText, storyToFlatted } from "../../document/export"
 import { numfmt } from "../../util";

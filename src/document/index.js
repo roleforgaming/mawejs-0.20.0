@@ -12,7 +12,7 @@ import {savemawe, toXML} from "./xmljs/save"
 import {info} from "./head"
 
 import {
-  getSuffix, suffix2format,
+  suffix2format,
   elemAsText, elemName, filterCtrlElems,
   file2buf, decodebuf,
 } from "./util";

@@ -6,7 +6,6 @@
 
 import {
   Editor,
-  Transforms,
 } from 'slate'
 
 export function isMarkActive(editor, format) {

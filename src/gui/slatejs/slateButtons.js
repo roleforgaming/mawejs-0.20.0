@@ -4,9 +4,7 @@
 //
 //*****************************************************************************
 
-import React, {
-  useCallback,
-} from 'react';
+import React from 'react';
 
 import {
   Editor,

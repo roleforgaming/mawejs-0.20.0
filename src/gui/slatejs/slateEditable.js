@@ -60,7 +60,7 @@ export function SlateEditable({className, visible, highlight, ...props}) {
     }
     :
     undefined,
-    [re]
+    [re, highlight]
   )
 
   const renderElem = useCallback(props => renderElement(props, editor), [editor])

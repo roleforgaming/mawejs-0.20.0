@@ -66,7 +66,6 @@ import {
   Home,
   Favorite,
 
-  Folder,
   InsertDriveFileOutlined,
   BrokenImageOutlined,
   CheckBox,
@@ -97,7 +96,6 @@ import {
 
 import {
   mdiTextBoxEditOutline,
-  mdiBookAlphabet,
   mdiBookOpenVariantOutline,
 } from '@mdi/js';
 
@@ -112,7 +110,6 @@ import { createSvgIcon } from '@mui/material';
 //const MdiSortAscending = createSvgIcon(<path d={mdiSortReverseVariant}/>)
 //const MdiSortDescending = createSvgIcon(<path d={mdiSortVariant}/>)
 const MdiTextBoxEditOutline = createSvgIcon(<path d={mdiTextBoxEditOutline}/>)
-const MdiBookAlphabet = createSvgIcon(<path d={mdiBookAlphabet}/>)
 const MdiBookOpenVariantOutline = createSvgIcon(<path d = {mdiBookOpenVariantOutline}/>)
 
 //-----------------------------------------------------------------------------
