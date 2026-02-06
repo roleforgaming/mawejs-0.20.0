@@ -6,59 +6,61 @@
 
 import React from "react"
 import { DeferredRender } from "../common/factory"
+import { useTheme } from '@mui/material/styles'
 
 //-----------------------------------------------------------------------------
 
-export class Preview extends React.PureComponent {
-  render() {
-    const {imported} = this.props
+export function Preview({ imported }) {
+  const theme = useTheme()
 
-    if(!imported) return null
+  if(!imported) return null
 
-    return <>
-      <ImportIndex
-        style={{minWidth: "200px", maxWidth: "300px", width: "300px"}}
-        imported={imported}
-        />
-      <div className="Filler Board Editor"
-        style={{borderRight: "1px solid lightgray", borderLeft: "1px solid lightgray"}}
-        tabIndex={0}
-        >
-        <div className="Sheet Regular">
-          <DeferredRender>{imported.map(PreviewAct)}</DeferredRender>
-          </div>
-      </div>
-    </>
-  }
+  return <>
+    <ImportIndex
+      style={{minWidth: "200px", maxWidth: "300px", width: "300px"}}
+      imported={imported}
+      />
+    <div className="Filler Board Editor"
+      style={{
+        borderRight: `1px solid ${theme.palette.divider}`,
+        borderLeft: `1px solid ${theme.palette.divider}`
+      }}
+      tabIndex={0}
+      >
+      <div className="Sheet Regular">
+        <DeferredRender>{imported.map((act, i) => <PreviewAct key={i} act={act} theme={theme} />)}</DeferredRender>
+        </div>
+    </div>
+  </>
 }
 
-function PreviewAct(act, index) {
-  return <div className="chapter" key={index}>
+function PreviewAct({ act, theme }) {
+  return <div className="chapter">
     <h4>{act.attributes.name}</h4>
-    {act.elements.map(PreviewChapter)}
+    {act.elements.map((chapter, i) => <PreviewChapter key={i} chapter={chapter} theme={theme} />)}
   </div>
 }
 
 
-function PreviewChapter(chapter, index) {
-  return <div className="chapter" key={index}>
+function PreviewChapter({ chapter, theme }) {
+  return <div className="chapter">
     <h5>{chapter.attributes.name}</h5>
-    {chapter.elements.map(PreviewScene)}
+    {chapter.elements.map((scene, i) => <PreviewScene key={i} scene={scene} theme={theme} />)}
   </div>
 }
 
-function PreviewScene(scene, index) {
-  return <div className="scene" key={index}>
+function PreviewScene({ scene, theme }) {
+  return <div className="scene">
     <h6>{scene.attributes.name}</h6>
-    {scene.elements.map(PreviewParagraph)}
+    {scene.elements.map((p, i) => <PreviewParagraph key={i} paragraph={p} theme={theme} />)}
   </div>
 }
 
-function PreviewParagraph(p, index) {
-  const text = p.elements.map(n => n.text).join(" ")
-  return <p key={index}>
+function PreviewParagraph({ paragraph, theme }) {
+  const text = paragraph.elements.map(n => n.text).join(" ")
+  return <p>
     {text}
-    <span style={{marginLeft: "2pt", color: "grey"}}>&para;</span>
+    <span style={{marginLeft: "2pt", color: theme.palette.text.secondary}}>&para;</span>
   </p>
 }
 

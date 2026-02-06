@@ -35,6 +35,7 @@ import { ImportText } from "./importText";
 //import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { useTheme } from '@mui/material/styles';
 
 //const anytext = require("any-text")
 const mammoth = require("mammoth")
@@ -73,6 +74,7 @@ function getContent(file, ext) {
 }
 
 export function ImportDialog({ updateDoc, buffer, setBuffer }) {
+  const theme = useTheme();
   const { file, ext } = buffer
 
   //console.log("File:", file, "Ext:", ext)
@@ -128,7 +130,7 @@ export function ImportDialog({ updateDoc, buffer, setBuffer }) {
       maxWidth="xl"
       disableEscapeKeyDown={true}
     >
-    <VBox style={{ overflow: "auto", padding: "4pt", background: "#F5F7F9" }}>
+    <VBox style={{ overflow: "auto", padding: "4pt", background: theme.palette.background.default }}>
 
     <ToolBox>
       <Label>Import from: {buffer.file?.name ?? "Clipboard"}</Label>
